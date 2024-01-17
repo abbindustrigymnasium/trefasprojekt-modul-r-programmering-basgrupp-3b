@@ -33,8 +33,9 @@ const base64encode = (input) => {
     .replace(/\//g, '_');
 }
 
+const codeVerifier  = generateRandomString(64);
+
 const getCodeChallenge = async (length) => {
-  const codeVerifier  = generateRandomString(64);
   const hashed = await sha256(codeVerifier);
   const codeChallenge = base64encode(hashed);
   return codeChallenge
