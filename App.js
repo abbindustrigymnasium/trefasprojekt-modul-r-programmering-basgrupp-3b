@@ -1,7 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import applyGlobalPolyfills from "./src/Polyfill/applyGlobalPolyfill" 
-applyGlobalPolyfills()
+import applyGlobalPolyfills from "./applyGlobalPolyfill" 
 
 
 import Login from './src/Components/Login';
