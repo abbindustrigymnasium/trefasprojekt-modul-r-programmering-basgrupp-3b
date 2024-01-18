@@ -13,7 +13,7 @@ export const storeStringData = async (key, value) => {
 export const storeObjectData = async (key, value) => {
     try {
       const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem('my-key', jsonValue);
+      await AsyncStorage.setItem(key, jsonValue);
     } catch (e) {
       // saving error
     }
@@ -24,6 +24,7 @@ export const getStringData = async (key) => {
     try {
       const value = await AsyncStorage.getItem(key);
       if (value !== null) {
+        return value
         // value previously stored
       }
     } catch (e) {
