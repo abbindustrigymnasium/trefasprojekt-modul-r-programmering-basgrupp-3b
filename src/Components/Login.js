@@ -6,7 +6,7 @@ import {Image as ReactImage} from 'react-native'
 import {storeObjectData, storeStringData, getObjectData, getStringData} from '../Storage/asyncStorageFunctions'
 import * as Crypto from 'expo-crypto';
 import {Image} from 'expo-image'
-
+import { router } from 'expo-router';
 import spotifyLogo from '../../assets/spotify-logos/Spotify_Logo_RGB_Black.png'
 
 
@@ -64,12 +64,31 @@ export default function LoginButton() {
         .then((tokenResponse) => {
           storeStringData('access_token', tokenResponse.accessToken)
           storeObjectData('token_response', tokenResponse)
+          router.replace("/prefs")
           console.log(tokenResponse.accessToken)
         })
         .catch((e) => console.log('error', e));
       
     }
   }, [response]);
+
+
+  React.useEffect(() => {
+    getObjectData('token_response')
+    .then((res) => {
+      if(res!=null) {
+          router.replace("/prefs")
+      }
+      
+    })
+    .catch((e) => {
+      console.log(e)
+    }
+
+    )
+
+
+  }, [])
 
 
   
@@ -88,7 +107,7 @@ export default function LoginButton() {
   return (
     <Pressable
       disabled={!request}
-      className="bg-spott-green px-6 w-5/6 max-w-[400px] h-16 flex justify-center items-center rounded-2xl flex-row"
+      className="bg-spott-green px-6 w-5/6 max-w-[400px] h-16 flex justify-center items-center rounded-2xl flex-row mb-6"
       style={{gap: 10}}
       onPress={() => {
         promptAsync();
@@ -102,7 +121,6 @@ export default function LoginButton() {
       
       source={require("../../assets/spotify-logos/Spotify_Logo_RGB_Black.png")}
         contentFit="contain"
-        transition={1000}
       />
       </Pressable>
       
