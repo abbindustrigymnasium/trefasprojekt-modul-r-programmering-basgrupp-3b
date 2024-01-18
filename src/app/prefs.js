@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import { Link } from 'expo-router'
 import { Card } from 'react-native-paper'
 
-import ApiCommunicator from '../components/api_communicator'
+import ApiCommunicator from '../Components/api_communicator'
 
 export default function Page () {
     return (
