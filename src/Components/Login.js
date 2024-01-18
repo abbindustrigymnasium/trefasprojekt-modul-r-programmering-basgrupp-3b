@@ -93,7 +93,6 @@ export default function LoginButton() {
   
   const onLayout=(event)=> {
     const {x, y, height, width} = event.nativeEvent.layout;
-    console.log(height, width)
     setDimensions({height: height, width: width})
 
     
