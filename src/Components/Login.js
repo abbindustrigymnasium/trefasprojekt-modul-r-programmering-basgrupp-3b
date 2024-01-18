@@ -1,10 +1,13 @@
 import * as React from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri, useAuthRequest, exchangeCodeAsync, TokenResponse } from 'expo-auth-session';
-import { Button } from 'react-native';
+import { View, Button, Pressable, Text , StyleSheet} from 'react-native';
+import {Image as ReactImage} from 'react-native'
 import {storeObjectData, storeStringData, getObjectData, getStringData} from '../Storage/asyncStorageFunctions'
 import * as Crypto from 'expo-crypto';
+import {Image} from 'expo-image'
 
+import spotifyLogo from '../../assets/spotify-logos/Spotify_Logo_RGB_Black.png'
 
 
  
@@ -21,6 +24,9 @@ const clientId = '749b24029aaa4c558238fc1e0b9dd38a'
 
 
 export default function LoginButton() {
+    const [dimensions, setDimensions] = React.useState({height: 200, width: 200})
+
+
   const [request, response, promptAsync] = useAuthRequest(
     {
       clientId: clientId,
@@ -65,15 +71,40 @@ export default function LoginButton() {
     }
   }, [response]);
 
+
+  
+  const onLayout=(event)=> {
+    const {x, y, height, width} = event.nativeEvent.layout;
+    console.log(height, width)
+    setDimensions({height: height, width: width})
+
+    
+  }
+
+
+
   
 
   return (
-    <Button
+    <Pressable
       disabled={!request}
-      title="Login with Spotify"
+      className="bg-spott-green px-6 w-5/6 max-w-[400px] h-16 flex justify-center items-center rounded-2xl flex-row"
+      style={{gap: 10}}
       onPress={() => {
         promptAsync();
       }}
-    />
+      onLayout={onLayout}
+    >
+      <Text className="  text-2xl font-bold text-all-black">Login with</Text>
+      <Image
+      style={{ width: dimensions.width*0.35, height:dimensions.height}}        
+      className=""
+      
+      source={require("../../assets/spotify-logos/Spotify_Logo_RGB_Black.png")}
+        contentFit="contain"
+        transition={1000}
+      />
+      </Pressable>
+      
   );
 }
