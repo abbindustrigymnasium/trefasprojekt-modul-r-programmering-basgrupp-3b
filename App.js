@@ -8,7 +8,7 @@ import Login from './src/Components/Login';
 
 export default function App() {
   return (
-    <View style={styles.container}>
+    <View className="flex-1 items-center justify-center bg-white">
       <Text>Open up App.js to start working on your app!</Text>
       <Login/>
       <StatusBar style="auto" />
@@ -17,10 +17,10 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+})
