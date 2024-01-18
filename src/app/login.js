@@ -1,12 +1,12 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native'
 import { Link } from 'expo-router'
+import LoginButton from '../Components/Login'
 
 export default function Page () {
     return (
-        <View style={styles.container}>
-            <Text>LOGIN</Text>
-            <Link href="/"> <Text>Return to home page</Text></Link>
-        </View>
+        <SafeAreaView className="flex-1 items-center justify-end bg-all-black pb-6">
+             <LoginButton className=""></LoginButton>
+        </SafeAreaView>
     )
 }
 
