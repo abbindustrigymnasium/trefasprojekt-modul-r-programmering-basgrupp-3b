@@ -65,7 +65,6 @@ export default function LoginButton() {
           storeStringData('access_token', tokenResponse.accessToken)
           storeObjectData('token_response', tokenResponse)
           router.replace("/prefs")
-          console.log(tokenResponse.accessToken)
         })
         .catch((e) => console.log('error', e));
       
