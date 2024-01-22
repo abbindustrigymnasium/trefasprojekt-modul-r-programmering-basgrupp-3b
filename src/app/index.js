@@ -7,7 +7,7 @@ export default function Page () {
             <View className="">
                 <Text className="">INDEX</Text>
             </View>
-            <Link href="/prefs"> <Text>Go to the 'Preferences' page</Text></Link>
+            <Link href="/recs"> <Text>Go to the 'References' page</Text></Link>
         </View>
     )
 }
