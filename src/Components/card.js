@@ -31,6 +31,7 @@ export default function Card({
     const rotation = useSharedValue("0deg")
     const {height, width} = useWindowDimensions();
     const [playing, setPlaying] = React.useState(false)
+    const [timeThings, setTimeThings] = React.useState({playedSeconds: "00", duration: "30"})
 
 
 
@@ -102,6 +103,8 @@ async function unloadSound() {
 
 
   _onPlaybackStatusUpdate = playbackStatus => {
+
+    setTimeThings({duration: Math.ceil(playbackStatus.durationMillis/1000), playedSeconds: Math.ceil(playbackStatus.positionMillis/1000) <10?   "0" + Math.ceil(playbackStatus.positionMillis/1000).toString() : Math.ceil(playbackStatus.positionMillis/1000)  }) 
     if (!playbackStatus.isLoaded) {
       // Update your UI for the unloaded state
       if (playbackStatus.error) {
@@ -228,11 +231,22 @@ let drag = Gesture.Pan()
         source={trackObject.album.images[0].url}
         className="aspect-square object-contain object-center w-full overflow-hidden"
       />
-      <View className="justify-between flex items-start">
+      <View className="justify-between flex items-end flex-row">
         <View className="flex flex-col items-stretch" style={{rowGap: "10px"}}>
             <Text className=" text-walter-white text-2xl font-semibold whitespace-nowrap">{trackObject.name}</Text>
                 
         <Text className=" text-groove-grey text-sm font-semibold whitespace-nowrap">{artistNames}</Text>
+
+       
+
+
+            
+            
+            
+            
+        </View>
+        <View className="flex flex-col items-stretch" style={{rowGap: "10px"}}>                
+        <Text className=" text-groove-grey text-sm font-semibold whitespace-nowrap">00:{timeThings.playedSeconds} / 00:{timeThings.duration}</Text>
 
        
 
