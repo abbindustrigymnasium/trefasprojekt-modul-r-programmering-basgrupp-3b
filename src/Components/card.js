@@ -6,8 +6,11 @@ import {
   StyleSheet,
   Image as ReactImage,
   Text,
+  Pressable,
 } from "react-native";
 import { Image } from "expo-image";
+
+import * as Linking from 'expo-linking';
 
 import {useWindowDimensions} from 'react-native';
 
@@ -18,7 +21,9 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring, withDecay } fro
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 
 
-export default function Card({}) {
+export default function Card({
+    trackObject
+}) {
     const translateX = useSharedValue(0);
     const translateY = useSharedValue(0);
     const hide = useSharedValue(false)
@@ -97,37 +102,59 @@ const onLayout=(event)=> {
     });
 
 
+    const artistNames = trackObject.artists.map(({name}) => name).join()
+
+
+
+
   return (
     
     <GestureDetector gesture={drag}>
     <Animated.View className={`justify-center bg-less-black flex w-5/6 max-w-[340px] flex-col px-5  py-5`} style={[{gap: "20px"}, containerStyle]}>
       <Image
         loading="lazy"
-        source={require("../../assets/lemonade.png")}
+        source={trackObject.album.images[0].url}
         className="aspect-square object-contain object-center w-full overflow-hidden"
       />
       <View className="justify-between flex items-start">
         <View className="flex flex-col items-stretch" style={{rowGap: "10px"}}>
-            <Text className=" text-walter-white text-2xl font-semibold whitespace-nowrap">Hold Up</Text>
-            <Text className=" text-groove-grey text-sm font-semibold whitespace-nowrap">Beyoncé</Text>
+            <Text className=" text-walter-white text-2xl font-semibold whitespace-nowrap">{trackObject.name}</Text>
+                
+        <Text className=" text-groove-grey text-sm font-semibold whitespace-nowrap">{artistNames}</Text>
+
+       
+
+
+            
+            
+            
+            
         </View>
       </View>
       <View className="flex flex-row items-center justify-between gap-5">
+        <Pressable onPress={() => Linking.openURL(trackObject.external_urls.spotify)}>
         <Image
           loading="lazy"
           source={require("../../assets/icons/open_in_new.svg")}
           className="aspect-square object-contain object-center w-8 overflow-hidden self-center shrink-0 max-w-full"
         />
-          <Image
+        </Pressable>
+        
+        <Pressable>
+        <Image
             loading="lazy"
             source={require("../../assets/icons/playbutton.svg")}
             className="aspect-square object-contain object-center w-14 overflow-hidden"
           />
+        </Pressable>
+         
+        <Pressable>
         <Image
           loading="lazy"
           source={require("../../assets/icons/info.svg")}
           className="aspect-square object-contain object-center w-8 overflow-hidden self-center shrink-0 max-w-full"
         />
+        </Pressable>
       </View>
     </Animated.View>
     </GestureDetector>
