@@ -50,6 +50,7 @@ async function handleSound() {
         setSound(sound);
         console.log('Playing Sound');
         sound.setOnPlaybackStatusUpdate(this._onPlaybackStatusUpdate);
+        sound.setIsLoopingAsync(true)
         await sound.playAsync();
     }else {
         console.log(sound)
