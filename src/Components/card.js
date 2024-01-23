@@ -21,6 +21,7 @@ import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-g
 export default function Card({}) {
     const translateX = useSharedValue(0);
     const translateY = useSharedValue(0);
+    const hide = useSharedValue(false)
     const rotation = useSharedValue("0deg")
     const {height, width} = useWindowDimensions();
 
@@ -49,12 +50,14 @@ const onLayout=(event)=> {
                 rotate: rotation.value
             }
           ],
+          display: hide.value ? "none" : "flex"
         };
       });
       
 
     const drag = Gesture.Pan()
     .onChange((event) => {
+        console.log("Did i even enter this?")
       translateX.value = event.translationX
       rotation.value = (((translateX.value/(width/2))*6+ "deg"))
       translateY.value = Math.abs((translateX.value/(width/2))*(height/2))*0.2
@@ -63,26 +66,31 @@ const onLayout=(event)=> {
     
 
     }).onFinalize((event) => {
+        console.log("I hope that i'm here")
         
-        if(Math.abs(translateX.value)<width*0.7) {
+        if(Math.abs(event.translationX)<(width*0.6)) {
+            console.log("Shouldn't be here")
             translateX.value = withSpring(0)
             translateY.value = withSpring(0)
             rotation.value = withSpring("0deg")
-        }else {
-            if(event.velocityX<0.1) {
+        }else if(Math.abs(event.translationX)>=width) {
+            translateX.value = event.translationX
+            translateY.value = event.translationY
+            console.log("Stopped")
+        
+    }else  {
+        console.log("here?")
                 translateX.value = withDecay({
-                    velocity: event.velocityX,
+                    clamp: [-width, width],
+                    velocity: event.translationX<0? -1000 : 1000,
     
                    
-                  })
+                  }, (completed) => {if(completed) {console.log("completed");hide.value=true}})
                 translateY.value = withDecay({
-                    velocity: event.velocityY
+                    velocity: event.velocityY,
     
                 })
-            }else {
-                translateX.value = width
-            }
-            
+                rotation.value=withSpring("0deg")
             
         }
 
