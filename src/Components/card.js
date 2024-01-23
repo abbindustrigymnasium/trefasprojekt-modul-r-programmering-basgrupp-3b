@@ -13,11 +13,12 @@ import { Image } from "expo-image";
 import * as Linking from 'expo-linking';
 
 import {useWindowDimensions} from 'react-native';
+import {Audio} from 'expo-av'
 
 
 
 
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withDecay } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withDecay, runOnJS } from 'react-native-reanimated';
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 
 
@@ -26,14 +27,118 @@ export default function Card({
 }) {
     const translateX = useSharedValue(0);
     const translateY = useSharedValue(0);
-    const hide = useSharedValue(false)
+    const [hasSwiped, setHasSwiped] = React.useState(false)
     const rotation = useSharedValue("0deg")
     const {height, width} = useWindowDimensions();
+    const [playing, setPlaying] = React.useState(false)
 
 
 
     
 const [size, setSize] = React.useState({height: 200, width: 200})
+const [sound, setSound] = React.useState();
+const [myVariable, setMyVariable] = React.useState();
+const [waitingForAwait, setWaitingForAwait] = React.useState(false)
+
+
+
+async function handleSound() {
+
+    if(!sound) {
+        console.log('Loading Sound');
+        const { sound } = await Audio.Sound.createAsync({uri: trackObject.preview_url}, {shouldPlay:true})
+        setSound(sound);
+        console.log('Playing Sound');
+        sound.setOnPlaybackStatusUpdate(this._onPlaybackStatusUpdate);
+        await sound.playAsync();
+    }else {
+        console.log(sound)
+        const status = await sound.getStatusAsync()
+        if(status.isPlaying) {
+            setWaitingForAwait(true)
+            await sound.pauseAsync()
+            setWaitingForAwait(false) 
+        }else {
+            setWaitingForAwait(true)
+            await sound.playAsync()
+            setWaitingForAwait(false)
+        }
+    }
+    
+}
+
+
+async function unloadSound() {
+    if(sound) {
+        sound.unloadAsync()
+        console.log("Unloaded sound")
+    }
+
+}
+
+
+    React.useEffect( () => {
+        if(sound && hasSwiped) {
+          unloadSound()
+        }
+        
+    }, [hasSwiped])
+
+  React.useEffect(() => {
+    console.log("Hopefully did something")
+    setMyVariable("jippi")
+    console.log("myVariable", myVariable)
+    console.log("sound", sound)
+   
+    return sound
+      ? () => {
+          unloadSound()
+        }
+      : undefined;
+  }, [sound]);
+
+
+
+
+  _onPlaybackStatusUpdate = playbackStatus => {
+    if (!playbackStatus.isLoaded) {
+      // Update your UI for the unloaded state
+      if (playbackStatus.error) {
+        console.log(`Encountered a fatal error during playback: ${playbackStatus.error}`);
+        // Send Expo team the error on Slack or the forums so we can help you debug!
+      }
+    } else {
+      // Update your UI for the loaded state
+  
+      if (playbackStatus.isPlaying) {
+        console.log("Music is playing from weird functions")
+        setPlaying(true)
+        // Update your UI for the playing state
+      } else {
+        console.log("Music has paused")
+
+        setPlaying(false)
+
+
+        // Update your UI for the paused state
+      }
+  
+      if (playbackStatus.isBuffering) {
+        // Update your UI for the buffering state
+      }
+  
+      if (playbackStatus.didJustFinish && !playbackStatus.isLooping) {
+        // The player has just finished playing and will stop. Maybe you want to play something else?
+      }
+  
+       // etc
+    }
+  };
+
+
+
+
+
 
 const onLayout=(event)=> {
   const {x, y, height, width} = event.nativeEvent.layout;
@@ -42,25 +147,7 @@ const onLayout=(event)=> {
   
 }
 
-    const containerStyle = useAnimatedStyle(() => {
-        return {
-          transform: [
-            {
-              translateX:  translateX.value
-            },
-            {
-              translateY: translateY.value
-            },
-            {
-                rotate: rotation.value
-            }
-          ],
-          display: hide.value ? "none" : "flex"
-        };
-      });
-      
-
-    const drag = Gesture.Pan()
+let drag = Gesture.Pan()
     .onChange((event) => {
         console.log("Did i even enter this?")
       translateX.value = event.translationX
@@ -90,7 +177,11 @@ const onLayout=(event)=> {
                     velocity: event.translationX<0? -1000 : 1000,
     
                    
-                  }, (completed) => {if(completed) {console.log("completed");hide.value=true}})
+                  },  (completed) => {
+                    if(completed) {
+                    runOnJS(setHasSwiped)(true)
+                
+                }})
                 translateY.value = withDecay({
                     velocity: event.velocityY,
     
@@ -101,6 +192,26 @@ const onLayout=(event)=> {
 
     });
 
+    const containerStyle = useAnimatedStyle(() => {
+        return {
+          transform: [
+            {
+              translateX:  translateX.value
+            },
+            {
+              translateY: translateY.value
+            },
+            {
+                rotate: rotation.value
+            }
+          ],
+          display: hasSwiped ? "none" : "flex"
+        };
+      });
+      
+
+    
+
 
     const artistNames = trackObject.artists.map(({name}) => name).join()
 
@@ -110,7 +221,7 @@ const onLayout=(event)=> {
   return (
     
     <GestureDetector gesture={drag}>
-    <Animated.View className={`justify-center bg-less-black flex w-5/6 max-w-[340px] flex-col px-5  py-5`} style={[{gap: "20px"}, containerStyle]}>
+    <Animated.View onLayout={onLayout} className={`justify-center bg-less-black flex w-5/6 max-w-[340px] flex-col px-5  py-5`} style={[{gap: "20px"}, containerStyle]}>
       <Image
         loading="lazy"
         source={trackObject.album.images[0].url}
@@ -140,10 +251,12 @@ const onLayout=(event)=> {
         />
         </Pressable>
         
-        <Pressable>
+        <Pressable 
+        disabled={waitingForAwait}
+        onPress={handleSound}>
         <Image
             loading="lazy"
-            source={require("../../assets/icons/playbutton.svg")}
+            source={!playing ? require("../../assets/icons/playbutton.svg") : require("../../assets/icons/pausebutton.svg")}
             className="aspect-square object-contain object-center w-14 overflow-hidden"
           />
         </Pressable>
