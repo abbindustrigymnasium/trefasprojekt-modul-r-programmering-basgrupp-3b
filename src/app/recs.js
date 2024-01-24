@@ -1,11 +1,12 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Image } from 'expo-image';
 import { Link } from 'expo-router'
 import * as React from 'react'
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 import Card from '../Components/card'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context'
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 
 
@@ -100,24 +101,68 @@ const sampleTrackObject  =
 
 export default function Page () {
 
+  const insets = useSafeAreaInsets();
+  const sizes = useSharedValue({red: 100, green: 100})
+
+
+const [cardState, setCardState] = React.useState(0)
+const [indicator, setIndicator] = React.useState(
+ (<View className={'w-10 h-6  mt-12'} >
   
+  </View>)
+)
+
+function getCardState(state) {
+  setCardState(state)
+
+};
+
+const animatedSmall = useAnimatedStyle(() => ({
+  width: withSpring(50)
+}));
+
+const animatedLarge = useAnimatedStyle(() => ({
+  width: withSpring(100)
+}));
 
 
-const [dimensions, setDimensions] = React.useState({height: 200, width: 200})
 
-const onLayout=(event)=> {
-  const {x, y, height, width} = event.nativeEvent.layout;
-  setDimensions({height: height, width: width})
 
-  
-}
+
 
     return (
       
-        <GestureHandlerRootView className="flex-1 items-center justify-end bg-all-black pb-6">
-          <View className="h-full w-full flex-col items-center justify-center">
+        <GestureHandlerRootView className="flex-1 items-center justify-end bg-all-black" style={{paddingTop: insets.top, paddingBottom: insets.bottom}}>
+          <View className=" h-full w-full flex flex-row justify-between items-end">
+            
+                <Animated.View className="bg-red-500 h-12 rounded-r-full flex items-center justify-center "
+                
+                style={
+                  cardState === -1 ? {width: 50} : animatedLarge
+                }>
+                  
+                  <Text className="font-semibold text-xl">
+                    {cardState === -1 ? '-' : 23}
+                  </Text>
+
+                </Animated.View>
+                <Animated.View className="bg-spott-green h-12  rounded-l-full items-center justify-center "
+                style={                  cardState === 1 ? {width: 50} : animatedLarge
+                }>
+                  <Text className="text-xl font-semibold">
+                                            {cardState === 1 ? '+' : 23}
+
+                  </Text>
+
+                </Animated.View>
+            </View>
+          <View className=" h-[85%] w-full flex-col items-center justify-center">
+            
+          
+           
             <Card 
             trackObject={sampleTrackObject}
+            getCardState={getCardState}
             
             >
             </Card>
@@ -129,12 +174,3 @@ const onLayout=(event)=> {
         </GestureHandlerRootView>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-})
