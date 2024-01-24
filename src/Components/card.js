@@ -33,7 +33,7 @@ export default function Card({
     const {height, width} = useWindowDimensions();
     const [playing, setPlaying] = React.useState(false)
     const [timeThings, setTimeThings] = React.useState({playedSeconds: "00", duration: "30"})
-    const [borderColor, setBorderColor] = React.useState(["border-opacity-0", "",])
+    const [borderColor, setBorderColor] = React.useState(["border-opacity-0", "border-transparent",])
 
 
 
@@ -43,6 +43,15 @@ const [sound, setSound] = React.useState();
 const [myVariable, setMyVariable] = React.useState();
 const [waitingForAwait, setWaitingForAwait] = React.useState(false)
 
+
+React.useEffect(() => {
+    if(trackObject.preview_url===null) {
+        getCardState(3)
+    }else {
+        handleSound()
+    }
+
+}, [trackObject])
 
 
 async function handleSound() {
@@ -146,6 +155,7 @@ async function unloadSound() {
 
 
 
+
 const onLayout=(event)=> {
   const {x, y, height, width} = event.nativeEvent.layout;
   setSize({height: height, width: width})
@@ -161,17 +171,17 @@ let drag = Gesture.Pan()
       translateY.value = Math.abs((translateX.value/(width/2))*(height/2))*0.2
       console.log(translateX.value)
       console.log(width)
-      if(Math.abs(event.translationX)>=(width*0.6)) {
+      if(Math.abs(event.translationX)>=(width*0.4)) {
         runOnJS(getCardState)(event.translationX<0 ? -1 : 1)
       }else {
-        runOnJS(setBorderColor)([((Math.abs(event.translationX)/(width*0.6))*1), event.translationX>0 ? 'border-spott-green' : 'border-red-500' ])
+        runOnJS(setBorderColor)([((Math.abs(event.translationX)/(width*0.4))*1), event.translationX>0 ? 'border-spott-green' : 'border-red-500' ])
         runOnJS(getCardState)(0)
 
       }
     }).onFinalize((event) => {
         console.log("I hope that i'm here")
         
-        if(Math.abs(event.translationX)<(width*0.6)) {
+        if(Math.abs(event.translationX)<(width*0.4)) {
             console.log("Shouldn't be here")
             translateX.value = withSpring(0)
             translateY.value = withSpring(0)
@@ -192,7 +202,7 @@ let drag = Gesture.Pan()
                   },  (completed) => {
                     if(completed) {
                     runOnJS(setHasSwiped)(true)
-                    runOnJS(getCardState)(0)
+                    runOnJS(getCardState)(translateX.value > 0 ? 2 : -2)
 
                 
                 }})
@@ -235,7 +245,7 @@ let drag = Gesture.Pan()
   return (
     
     <GestureDetector gesture={drag}>
-    <Animated.View onLayout={onLayout} className={`justify-center bg-less-black  ${borderColor[1]} border-2 flex border-opacity-25 w-5/6 max-w-[340px] flex-col px-5  py-5 `} style={[{gap: "20px"} , containerStyle]}>
+    <Animated.View onLayout={onLayout} className={`justify-center bg-less-black  ${borderColor[1]} border-2 flex w-5/6 max-w-[340px] flex-col px-5  py-5 `} style={[{gap: "20px"} , containerStyle]}>
       <Image
         loading="lazy"
         source={trackObject.album.images[0].url}
