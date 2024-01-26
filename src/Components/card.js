@@ -18,7 +18,7 @@ import {Audio} from 'expo-av'
 
 
 
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withDecay, runOnJS } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withDecay, runOnJS, withRepeat, withTiming, Easing, withSequence, withDelay} from 'react-native-reanimated';
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 
 
@@ -34,6 +34,7 @@ export default function Card({
     const [playing, setPlaying] = React.useState(false)
     const [timeThings, setTimeThings] = React.useState({playedSeconds: "00", duration: "30"})
     const [borderColor, setBorderColor] = React.useState(["border-opacity-0", "border-transparent",])
+    const artistShower = React.useRef(null)
 
 
 
@@ -57,15 +58,12 @@ React.useEffect(() => {
 async function handleSound() {
 
     if(!sound) {
-        console.log('Loading Sound');
         const { sound } = await Audio.Sound.createAsync({uri: trackObject.preview_url}, {shouldPlay:true})
         setSound(sound);
-        console.log('Playing Sound');
         sound.setOnPlaybackStatusUpdate(this._onPlaybackStatusUpdate);
         sound.setIsLoopingAsync(true)
         await sound.playAsync();
     }else {
-        console.log(sound)
         const status = await sound.getStatusAsync()
         if(status.isPlaying) {
             setWaitingForAwait(true)
@@ -84,7 +82,6 @@ async function handleSound() {
 async function unloadSound() {
     if(sound) {
         sound.unloadAsync()
-        console.log("Unloaded sound")
     }
 
 }
@@ -98,10 +95,7 @@ async function unloadSound() {
     }, [hasSwiped])
 
   React.useEffect(() => {
-    console.log("Hopefully did something")
     setMyVariable("jippi")
-    console.log("myVariable", myVariable)
-    console.log("sound", sound)
    
     return sound
       ? () => {
@@ -126,11 +120,9 @@ async function unloadSound() {
       // Update your UI for the loaded state
   
       if (playbackStatus.isPlaying) {
-        console.log("Music is playing from weird functions")
         setPlaying(true)
         // Update your UI for the playing state
       } else {
-        console.log("Music has paused")
 
         setPlaying(false)
 
@@ -165,12 +157,9 @@ const onLayout=(event)=> {
 
 let drag = Gesture.Pan()
     .onChange((event) => {
-        console.log("Did i even enter this?")
       translateX.value = event.translationX
       rotation.value = (((translateX.value/(width/2))*6+ "deg"))
       translateY.value = Math.abs((translateX.value/(width/2))*(height/2))*0.2
-      console.log(translateX.value)
-      console.log(width)
       if(Math.abs(event.translationX)>=(width*0.4)) {
         runOnJS(getCardState)(event.translationX<0 ? -1 : 1)
       }else {
@@ -179,10 +168,8 @@ let drag = Gesture.Pan()
 
       }
     }).onFinalize((event) => {
-        console.log("I hope that i'm here")
         
         if(Math.abs(event.translationX)<(width*0.4)) {
-            console.log("Shouldn't be here")
             translateX.value = withSpring(0)
             translateY.value = withSpring(0)
             rotation.value = withSpring("0deg")
@@ -190,10 +177,8 @@ let drag = Gesture.Pan()
         }else if(Math.abs(event.translationX)>=width) {
             translateX.value = event.translationX
             translateY.value = event.translationY
-            console.log("Stopped")
         
     }else  {
-        console.log("here?")
                 translateX.value = withDecay({
                     clamp: [-width, width],
                     velocity: event.translationX<0? -1000 : 1000,
@@ -237,8 +222,57 @@ let drag = Gesture.Pan()
     
 
 
-    const artistNames = trackObject.artists.map(({name}) => name).join()
+    const textWidth = useSharedValue(100)
+    const textBoxWidth = useSharedValue(100)
 
+    const onTextLayout = e => {
+      textWidth.value = e.nativeEvent.layout.width
+
+    }
+
+    const getTextBoxWidth = e => {
+      textBoxWidth.value = e.nativeEvent.layout.width
+
+
+    }
+  
+  
+    const offset = useSharedValue(0);
+
+    const animatedStyles = useAnimatedStyle(() => ({
+      transform: Math.floor(textWidth.value)>Math.ceil(textBoxWidth.value) ?  [{ translateX:  offset.value }] : [{ translateX:  0 }],
+    }));
+  
+    React.useEffect(() => {
+      setTimeout( () => { 
+        offset.value = 
+        withRepeat(
+
+          withSequence(
+            withDelay(3000, withTiming(-((textWidth.value-textBoxWidth.value)), { duration: 40*(textWidth.value-textBoxWidth.value) ,       easing: Easing.linear,
+            })),
+            withDelay(3000, withTiming(0, { duration: 40*(textWidth.value-textBoxWidth.value) ,       easing: Easing.linear,
+            }))
+            
+          )
+          
+,
+                 -1,
+          true
+        )
+     
+      }  ,1000)
+     
+    }, [,]);
+
+    const artistNames = trackObject.artists.map(({name}, index) => {
+      return (<Animated.Text key={name} className=" text-groove-grey text-sm font-semibold" >{name}{index===(trackObject.artists.length-1) ? '' : ', '} </Animated.Text>)
+
+    }
+    
+    )
+  
+  
 
 
 
@@ -251,11 +285,10 @@ let drag = Gesture.Pan()
         source={trackObject.album.images[0].url}
         className="aspect-square object-contain object-center w-full overflow-hidden"
       />
-      <View className="justify-between flex items-end flex-row">
-        <View className="flex flex-col items-stretch" style={{rowGap: "10px"}}>
-            <Text className=" text-walter-white text-2xl font-semibold whitespace-nowrap">{trackObject.name}</Text>
+      <View className="justify-between flex items-end flex-col w-full">
+        <View className="flex flex-col items-stretch w-full" >
+            <Text className=" text-walter-white text-2xl font-semibold whitespace-nowrap" >{trackObject.name}</Text>
                 
-        <Text className=" text-groove-grey text-sm font-semibold whitespace-nowrap">{artistNames}</Text>
 
        
 
@@ -265,7 +298,14 @@ let drag = Gesture.Pan()
             
             
         </View>
-        <View className="flex flex-col items-stretch" style={{rowGap: "10px"}}>                
+        <View className="flex flex-row justify-between w-full h-5 items-center"> 
+        <View className="max-w-[60%] flex-row flex flex-nowrap justify-start items-center overflow-hidden" onLayout={getTextBoxWidth}>
+          <Animated.View  className=" flex-row flex flex-nowrap justify-start items-center" onLayout={onTextLayout} style={animatedStyles }>
+              {artistNames}
+          </Animated.View>
+        </View>
+
+            
         <Text className=" text-groove-grey text-sm font-semibold whitespace-nowrap">00:{timeThings.playedSeconds} / 00:{timeThings.duration}</Text>
 
        
