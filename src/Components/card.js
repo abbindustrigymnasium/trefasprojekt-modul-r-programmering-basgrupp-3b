@@ -18,12 +18,13 @@ import {Audio} from 'expo-av'
 
 
 
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withDecay, runOnJS, withRepeat, withTiming, Easing, withSequence, withDelay} from 'react-native-reanimated';
+import Animated, { SlideInUp,useAnimatedStyle, useSharedValue, withSpring, withDecay, runOnJS, withRepeat, withTiming, Easing, withSequence, withDelay, FlipInEasyY, PinwheelIn, BounceIn, FadeInUp, StretchInX, ZoomIn, RollInLeft, LightSpeedInLeft, FadeIn} from 'react-native-reanimated';
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 
 import TextTicker from "./TextTicker/";
 
 export default function Card({
+    index,
     trackObject,
     getCardState
 }) {
@@ -233,7 +234,7 @@ let drag = Gesture.Pan()
   return (
     
     <GestureDetector gesture={drag}>
-    <Animated.View onLayout={onLayout} className={`border-2 w-5/6 max-w-[340px]`} style={[{ borderColor: borderColor, backgroundColor: borderColor} , containerStyle]}>
+    <Animated.View entering={index>0 ? FadeIn.duration(200).easing(Easing.ease) : null} onLayout={onLayout} className={`border-2 w-5/6 max-w-[340px]`} style={[{ borderColor: borderColor, backgroundColor: borderColor} , containerStyle]}>
       
      
       <Animated.View className="flex flex-col justify-center w-full bg-less-black px-5 py-5" style={{gap: "20px", opacity: cardOpacity}}>

@@ -8404,10 +8404,18 @@ const animatedLarge = useAnimatedStyle(() => ({
   width: withSpring(100)
 }));
 
-const cardList = sampleTrackResponse.map((element, index) => {
-   return ((cardIndex === index && !hideAllCards) ? ( <Card 
+const filteredTrackResponse = React.useMemo(() => {
+  return (sampleTrackResponse.filter((element, index) => {  
+    return element.preview_url!=null
+  }))
+}, [sampleTrackResponse])
+
+
+const cardList = filteredTrackResponse.map((element, index) => {
+   return ((cardIndex === index && !hideAllCards)  ? ( <Card 
             key={index}
-            trackObject={sampleTrackResponse[cardIndex]}
+            index={index}
+            trackObject={filteredTrackResponse[cardIndex]}
             getCardState={getCardState}
     >
 </Card>) : null)
