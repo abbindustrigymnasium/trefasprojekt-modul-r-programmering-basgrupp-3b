@@ -1,10 +1,10 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { Image } from 'expo-image';
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
 import * as React from 'react'
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
-import Card from '../Components/card'
+import Card from '../Components/Card'
 import { SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context'
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -8374,6 +8374,7 @@ export default function Page () {
 
   const insets = useSafeAreaInsets();
   const sizes = useSharedValue({red: 100, green: 100})
+  const [hideAllCards, setHideAllCards] = React.useState(false)
   
 
 
@@ -8404,7 +8405,7 @@ const animatedLarge = useAnimatedStyle(() => ({
 }));
 
 const cardList = sampleTrackResponse.map((element, index) => {
-   return (cardIndex === index ? ( <Card 
+   return ((cardIndex === index && !hideAllCards) ? ( <Card 
             key={index}
             trackObject={sampleTrackResponse[cardIndex]}
             getCardState={getCardState}
@@ -8446,11 +8447,16 @@ const cardList = sampleTrackResponse.map((element, index) => {
    
 
           </View>
-            <Pressable
-            onPress={() => console.log}
+              
+          
+          <Pressable
+            onPress={() => {setHideAllCards(true); router.push("/playlist")}}
             className=" bg-spott-green w-5/6 max-w-[340px] py-5 flex rounded-2xl items-center justify-center">
-  <Text className=" font-semibold text-2xl ">Done</Text>
-  </Pressable>
+            <Text className=" font-semibold text-2xl ">Done</Text>
+              </Pressable>
+
+
+            
         </GestureHandlerRootView>
     )
 }

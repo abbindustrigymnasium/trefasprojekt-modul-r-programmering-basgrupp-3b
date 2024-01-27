@@ -21,6 +21,7 @@ import {Audio} from 'expo-av'
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withDecay, runOnJS, withRepeat, withTiming, Easing, withSequence, withDelay} from 'react-native-reanimated';
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 
+import TextTicker from "./TextTicker/";
 
 export default function Card({
     trackObject,
@@ -106,8 +107,8 @@ async function unloadSound() {
 
 
 
-
   _onPlaybackStatusUpdate = playbackStatus => {
+    
 
     setTimeThings({duration: Math.ceil(playbackStatus.durationMillis/1000), playedSeconds: Math.ceil(playbackStatus.positionMillis/1000) <10?   "0" + Math.ceil(playbackStatus.positionMillis/1000).toString() : Math.ceil(playbackStatus.positionMillis/1000)  }) 
     if (!playbackStatus.isLoaded) {
@@ -163,7 +164,7 @@ let drag = Gesture.Pan()
       if(Math.abs(event.translationX)>=(width*0.4)) {
         runOnJS(getCardState)(event.translationX<0 ? -1 : 1)
       }else {
-        runOnJS(setBorderColor)([((Math.abs(event.translationX)/(width*0.4))*1), event.translationX>0 ? 'border-spott-green' : 'border-red-500' ])
+        runOnJS(setBorderColor)(["irrelevant", event.translationX>0 ? 'border-spott-green' : 'border-red-500' ])
         runOnJS(getCardState)(0)
 
       }
@@ -174,11 +175,7 @@ let drag = Gesture.Pan()
             translateY.value = withSpring(0)
             rotation.value = withSpring("0deg")
             runOnJS(setBorderColor)([borderColor[0], 'border-transparent'])
-        }else if(Math.abs(event.translationX)>=width) {
-            translateX.value = event.translationX
-            translateY.value = event.translationY
-        
-    }else  {
+        }else  {
                 translateX.value = withDecay({
                     clamp: [-width, width],
                     velocity: event.translationX<0? -1000 : 1000,
@@ -222,55 +219,9 @@ let drag = Gesture.Pan()
     
 
 
-    const textWidth = useSharedValue(100)
-    const textBoxWidth = useSharedValue(100)
-
-    const onTextLayout = e => {
-      textWidth.value = e.nativeEvent.layout.width
-
-    }
-
-    const getTextBoxWidth = e => {
-      textBoxWidth.value = e.nativeEvent.layout.width
+   
 
 
-    }
-  
-  
-    const offset = useSharedValue(0);
-
-    const animatedStyles = useAnimatedStyle(() => ({
-      transform: Math.floor(textWidth.value)>Math.ceil(textBoxWidth.value) ?  [{ translateX:  offset.value }] : [{ translateX:  0 }],
-    }));
-  
-    React.useEffect(() => {
-      setTimeout( () => { 
-        offset.value = 
-        withRepeat(
-
-          withSequence(
-            withDelay(3000, withTiming(-((textWidth.value-textBoxWidth.value)), { duration: 40*(textWidth.value-textBoxWidth.value) ,       easing: Easing.linear,
-            })),
-            withDelay(3000, withTiming(0, { duration: 40*(textWidth.value-textBoxWidth.value) ,       easing: Easing.linear,
-            }))
-            
-          )
-          
-,
-                 -1,
-          true
-        )
-     
-      }  ,1000)
-     
-    }, [,]);
-
-    const artistNames = trackObject.artists.map(({name}, index) => {
-      return (<Animated.Text key={name} className=" text-groove-grey text-sm font-semibold" >{name}{index===(trackObject.artists.length-1) ? '' : ', '} </Animated.Text>)
-
-    }
-    
-    )
   
   
 
@@ -279,7 +230,7 @@ let drag = Gesture.Pan()
   return (
     
     <GestureDetector gesture={drag}>
-    <Animated.View onLayout={onLayout} className={`justify-center bg-less-black  ${borderColor[1]} border-2 flex w-5/6 max-w-[340px] flex-col px-5  py-5 `} style={[{gap: "20px"} , containerStyle]}>
+    <Animated.View onLayout={onLayout} className={`justify-center ${borderColor[1]} border-2 bg-less-black flex w-5/6 max-w-[340px] flex-col px-5  py-5 `} style={[{gap: "20px"} , containerStyle]}>
       <Image
         loading="lazy"
         source={trackObject.album.images[0].url}
@@ -287,41 +238,18 @@ let drag = Gesture.Pan()
       />
       <View className="justify-between flex items-end flex-col w-full">
         <View className="flex flex-col items-stretch w-full" >
-            <Text className=" text-walter-white text-2xl font-semibold whitespace-nowrap" >{trackObject.name}</Text>
-                
-
-       
-
-
-            
-            
-            
-            
+            <TextTicker className="w-full"  textList={trackObject.name} textClassName="text-walter-white text-2xl font-semibold" />          
         </View>
         <View className="flex flex-row justify-between w-full h-5 items-center"> 
-        <View className="max-w-[60%] flex-row flex flex-nowrap justify-start items-center overflow-hidden" onLayout={getTextBoxWidth}>
-          <Animated.View  className=" flex-row flex flex-nowrap justify-start items-center" onLayout={onTextLayout} style={animatedStyles }>
-              {artistNames}
-          </Animated.View>
-        </View>
-
-            
-        <Text className=" text-groove-grey text-sm font-semibold whitespace-nowrap">00:{timeThings.playedSeconds} / 00:{timeThings.duration}</Text>
-
-       
-
-
-            
-            
-            
-            
+        <TextTicker containerClassName={"max-w-[60%]"} textList={trackObject.artists.map((item) => item.name)} textClassName="text-groove-grey text-sm font-semibold" />
+        <Text className=" text-groove-grey text-sm font-semibold whitespace-nowrap">00:{timeThings.playedSeconds} / 00:{timeThings.duration}</Text>      
         </View>
       </View>
       <View className="flex flex-row items-center justify-between gap-5">
         <Pressable onPress={() => Linking.openURL(trackObject.external_urls.spotify)}>
         <Image
           loading="lazy"
-          source={require("../../assets/icons/open_in_new.svg")}
+          source={require("../../assets/icons/spotify_logo.png")}
           className="aspect-square object-contain object-center w-8 overflow-hidden self-center shrink-0 max-w-full"
         />
         </Pressable>
