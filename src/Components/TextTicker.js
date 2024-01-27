@@ -6,13 +6,22 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring, withDecay, runO
 import * as Crypto from 'expo-crypto'
 
 
-const TextTicker = (
+
+/**
+ * A component that displays a text ticker.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Array|string} props.textList - The list of texts to be displayed in the ticker. If it's a string, it will be split into an array of words.
+ * @param {string} props.containerClassName - The CSS class name for the container element.
+ * @param {string} props.textClassName - The CSS class name for the text element.
+ * @returns {JSX.Element} The rendered component.
+ */
+export default function  TextTicker (
    { textList, 
     containerClassName, 
     textClassName
-}
-
-) => {
+}){
 
 
     const textWidth = useSharedValue(100)
@@ -86,6 +95,4 @@ const TextTicker = (
         </View>
     );
 };
-
-export default TextTicker;
 

@@ -3,8 +3,6 @@ import { Image } from 'expo-image';
 import { Link, router } from 'expo-router'
 import * as React from 'react'
 import Animated, { BounceIn, Easing, FadeIn, SlideInDown, SlideInLeft, SlideInRight, SlideInUp, SlideOutDown, SlideOutLeft, useAnimatedStyle, useSharedValue, withDecay, withSpring, withTiming } from 'react-native-reanimated';
-
-
 import { SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context'
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 

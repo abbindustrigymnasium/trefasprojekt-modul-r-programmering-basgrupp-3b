@@ -20,6 +20,14 @@ import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-g
 
 import TextTicker from "./TextTicker/";
 
+/**
+ * Represents a Card component.
+ * @param {Object} props - The component props.
+ * @param {number} props.index - The index of the card.
+ * @param {Object} props.trackObject - The track object.
+ * @param {Function} props.getCardState - The function to get the card state.
+ * @returns {JSX.Element} The Card component.
+ */
 export default function Card({
     index,
     trackObject,
@@ -281,6 +289,3 @@ let drag = Gesture.Pan()
     </GestureDetector>
   );
 }
-
-
-
