@@ -8373,9 +8373,7 @@ const sampleTrackResponse  = [
 export default function Page () {
 
   const insets = useSafeAreaInsets();
-  const sizes = useSharedValue({red: 100, green: 100})
-  const [hideAllCards, setHideAllCards] = React.useState(false)
-  
+  const sizes = useSharedValue({red: 100, green: 100})  
 
 
 const [cardState, setCardState] = React.useState(0)
@@ -8417,7 +8415,6 @@ const cardList = filteredTrackResponse.map((element, index) => {
             key={index}
             index={index}
             trackObject={filteredTrackResponse[cardIndex]}
-            switchedScreens={hideAllCards}
             getCardState={getCardState}
     >
 </Card>) : null)
@@ -8470,7 +8467,7 @@ const cardList = filteredTrackResponse.map((element, index) => {
               
           
           <Pressable
-            onPress={() => {setHideAllCards(true); router.push("/playlist")}}
+            onPress={() => {router.push("/playlist")}}
             className=" bg-spott-green w-5/6 max-w-[340px] py-5 flex rounded-2xl items-center justify-center">
             <Text className=" font-semibold text-2xl ">Done</Text>
               </Pressable>
