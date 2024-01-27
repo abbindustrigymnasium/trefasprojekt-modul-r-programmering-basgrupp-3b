@@ -4,11 +4,13 @@ import { Link, router } from 'expo-router'
 import * as React from 'react'
 import Animated, { BounceIn, Easing, FadeIn, SlideInDown, SlideInLeft, SlideInRight, SlideInUp, SlideOutDown, SlideOutLeft, useAnimatedStyle, useSharedValue, withDecay, withSpring, withTiming } from 'react-native-reanimated';
 
-import Card from '../Components/Card'
+
 import { SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context'
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+import * as Haptics from 'expo-haptics';
 
+import Card from '../Components/Card';
 
 const sampleTrackResponse  = [
   {
@@ -8390,9 +8392,16 @@ function getCardState(state) {
       setHatedSongs([...hatedSongs, sampleTrackResponse[cardIndex]])
     }
     setCardIndex(cardIndex+1)
+  }else {
   }
 
 };
+
+React.useEffect(() => {
+  Math.abs(cardState)===1 ?  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium): null
+
+
+}, [cardState])
 
 const animatedRight = useAnimatedStyle(() => ({
   width: withSpring(cardState===1 ? 110 : 80, {duration: 500})
@@ -8419,6 +8428,7 @@ const cardList = filteredTrackResponse.map((element, index) => {
     >
 </Card>) : null)
 })
+console.log(cardList)
 
 
 
