@@ -34,8 +34,9 @@ export default function Card({
     const {height, width} = useWindowDimensions();
     const [playing, setPlaying] = React.useState(false)
     const [timeThings, setTimeThings] = React.useState({playedSeconds: "00", duration: "30"})
-    const [borderColor, setBorderColor] = React.useState("transparent")
+    const borderColor= useSharedValue("transparent")
     const artistShower = React.useRef(null)
+    const cardOpacity = useSharedValue(1.0)
 
 
 
@@ -164,7 +165,8 @@ let drag = Gesture.Pan()
       if(Math.abs(event.translationX)>=(width*0.4)) {
         runOnJS(getCardState)(event.translationX<0 ? -1 : 1)
       }else {
-        runOnJS(setBorderColor)(event.translationX>0 ? `rgba(30, 215, 96, ${(Math.abs(translateX.value)/(width*0.4)).toFixed(2)})` : `rgba(244, 67, 54,  ${(Math.abs(translateX.value)/(width*0.4)).toFixed(2)})`)
+        borderColor.value = (event.translationX>0 ? `rgba(30, 215, 96, ${(Math.abs(translateX.value)/(width*0.4)).toFixed(2)})` : `rgba(244, 67, 54,  ${(Math.abs(translateX.value)/(width*0.4)).toFixed(2)})`)
+        cardOpacity.value = (1-(Math.abs(translateX.value)/(width*0.4)).toFixed(2))
         runOnJS(getCardState)(0)
 
       }
@@ -174,7 +176,8 @@ let drag = Gesture.Pan()
             translateX.value = withSpring(0)
             translateY.value = withSpring(0)
             rotation.value = withSpring("0deg")
-            runOnJS(setBorderColor)('transparent')
+            cardOpacity.value = (1.0)
+            borderColor.value = 'transparent'
         }else  {
                 translateX.value = withDecay({
                     clamp: [-width, width],
@@ -230,7 +233,10 @@ let drag = Gesture.Pan()
   return (
     
     <GestureDetector gesture={drag}>
-    <Animated.View onLayout={onLayout} className={`justify-center border-2 bg-less-black flex w-5/6 max-w-[340px] flex-col px-5  py-5 `} style={[{gap: "20px", borderColor: borderColor} , containerStyle]}>
+    <Animated.View onLayout={onLayout} className={`border-2 w-5/6 max-w-[340px]`} style={[{ borderColor: borderColor, backgroundColor: borderColor} , containerStyle]}>
+      
+     
+      <Animated.View className="flex flex-col justify-center w-full bg-less-black px-5 py-5" style={{gap: "20px", opacity: cardOpacity}}>
       <Image
         loading="lazy"
         source={trackObject.album.images[0].url}
@@ -272,6 +278,7 @@ let drag = Gesture.Pan()
         />
         </Pressable>
       </View>
+      </Animated.View>
     </Animated.View>
     </GestureDetector>
   );
