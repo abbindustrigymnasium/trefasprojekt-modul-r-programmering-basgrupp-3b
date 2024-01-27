@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { Image } from 'expo-image';
 import { Link, router } from 'expo-router'
 import * as React from 'react'
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { BounceIn, Easing, FadeIn, SlideInDown, SlideInLeft, SlideInRight, SlideInUp, SlideOutDown, SlideOutLeft, useAnimatedStyle, useSharedValue, withDecay, withSpring, withTiming } from 'react-native-reanimated';
 
 import Card from '../Components/Card'
 import { SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context'
@@ -8396,13 +8396,14 @@ function getCardState(state) {
 
 };
 
-const animatedSmall = useAnimatedStyle(() => ({
-  width: withSpring(50)
+const animatedRight = useAnimatedStyle(() => ({
+  width: withSpring(cardState===1 ? 110 : 80, {duration: 500})
 }));
 
-const animatedLarge = useAnimatedStyle(() => ({
-  width: withSpring(100)
+const animatedLeft = useAnimatedStyle(() => ({
+  width: withSpring(cardState===-1 ? 110 : 80, {duration: 500})
 }));
+
 
 const filteredTrackResponse = React.useMemo(() => {
   return (sampleTrackResponse.filter((element, index) => {  
@@ -8412,10 +8413,11 @@ const filteredTrackResponse = React.useMemo(() => {
 
 
 const cardList = filteredTrackResponse.map((element, index) => {
-   return ((cardIndex === index && !hideAllCards)  ? ( <Card 
+   return ((cardIndex === index)  ? ( <Card 
             key={index}
             index={index}
             trackObject={filteredTrackResponse[cardIndex]}
+            switchedScreens={hideAllCards}
             getCardState={getCardState}
     >
 </Card>) : null)
@@ -8432,21 +8434,31 @@ const cardList = filteredTrackResponse.map((element, index) => {
                 <Animated.View className="bg-red-500 h-12 rounded-r-full flex items-center justify-center "
                 
                 style={
-                  cardState === -1 ? {width: 50} : animatedLarge
+                animatedLeft
                 }>
                   
-                  <Text className="font-semibold text-xl">
-                    {cardState === -1 ? '-' : hatedSongs.length}
-                  </Text>
-
+                  {cardState === -1 ?
+                    
+                    <Animated.Text className=" font-bold text-xl uppercase ">
+                   FORGET
+                    </Animated.Text>
+                    :  <Animated.Text className="font-semibold text-2xl uppercase">
+                    {hatedSongs.length}
+                     </Animated.Text>}
                 </Animated.View>
-                <Animated.View className="bg-spott-green h-12  rounded-l-full items-center justify-center "
-                style={                  cardState === 1 ? {width: 50} : animatedLarge
+                <Animated.View  className="bg-spott-green  h-12 rounded-l-full items-center justify-center"
+                style={                 animatedRight
                 }>
-                  <Text className="text-xl font-semibold">
-                                            {cardState === 1 ? '+' : likedSongs.length}
-
-                  </Text>
+                    {cardState === 1 ?
+                    
+                    <Animated.Text className="font-bold text-xl  uppercase">
+                   ADD
+                    </Animated.Text>
+                    :  <Animated.Text className="font-semibold text-2xl">
+                    {likedSongs.length}
+                     </Animated.Text>}
+                  
+                  
 
                 </Animated.View>
             </View>
