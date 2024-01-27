@@ -15,9 +15,6 @@ import * as Linking from 'expo-linking';
 import {useWindowDimensions} from 'react-native';
 import {Audio} from 'expo-av'
 
-
-
-
 import Animated, { SlideInUp,useAnimatedStyle, useSharedValue, withSpring, withDecay, runOnJS, withRepeat, withTiming, Easing, withSequence, withDelay, FlipInEasyY, PinwheelIn, BounceIn, FadeInUp, StretchInX, ZoomIn, RollInLeft, LightSpeedInLeft, FadeIn} from 'react-native-reanimated';
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -161,8 +158,8 @@ const onLayout=(event)=> {
 let drag = Gesture.Pan()
     .onChange((event) => {
       translateX.value = event.translationX
+      translateY.value = event.translationY
       rotation.value = (((translateX.value/(width/2))*6+ "deg"))
-      translateY.value = Math.abs((translateX.value/(width/2))*(height/2))*0.2
       if(Math.abs(event.translationX)>=(width*0.4)) {
         runOnJS(getCardState)(event.translationX<0 ? -1 : 1)
       }else {
