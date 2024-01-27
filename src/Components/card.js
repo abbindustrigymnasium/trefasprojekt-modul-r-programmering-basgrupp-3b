@@ -34,7 +34,7 @@ export default function Card({
     const {height, width} = useWindowDimensions();
     const [playing, setPlaying] = React.useState(false)
     const [timeThings, setTimeThings] = React.useState({playedSeconds: "00", duration: "30"})
-    const [borderColor, setBorderColor] = React.useState(["border-opacity-0", "border-transparent",])
+    const [borderColor, setBorderColor] = React.useState("transparent")
     const artistShower = React.useRef(null)
 
 
@@ -164,7 +164,7 @@ let drag = Gesture.Pan()
       if(Math.abs(event.translationX)>=(width*0.4)) {
         runOnJS(getCardState)(event.translationX<0 ? -1 : 1)
       }else {
-        runOnJS(setBorderColor)(["irrelevant", event.translationX>0 ? 'border-spott-green' : 'border-red-500' ])
+        runOnJS(setBorderColor)(event.translationX>0 ? `rgba(30, 215, 96, ${(Math.abs(translateX.value)/(width*0.4)).toFixed(2)})` : `rgba(244, 67, 54,  ${(Math.abs(translateX.value)/(width*0.4)).toFixed(2)})`)
         runOnJS(getCardState)(0)
 
       }
@@ -174,7 +174,7 @@ let drag = Gesture.Pan()
             translateX.value = withSpring(0)
             translateY.value = withSpring(0)
             rotation.value = withSpring("0deg")
-            runOnJS(setBorderColor)([borderColor[0], 'border-transparent'])
+            runOnJS(setBorderColor)('transparent')
         }else  {
                 translateX.value = withDecay({
                     clamp: [-width, width],
@@ -230,7 +230,7 @@ let drag = Gesture.Pan()
   return (
     
     <GestureDetector gesture={drag}>
-    <Animated.View onLayout={onLayout} className={`justify-center ${borderColor[1]} border-2 bg-less-black flex w-5/6 max-w-[340px] flex-col px-5  py-5 `} style={[{gap: "20px"} , containerStyle]}>
+    <Animated.View onLayout={onLayout} className={`justify-center border-2 bg-less-black flex w-5/6 max-w-[340px] flex-col px-5  py-5 `} style={[{gap: "20px", borderColor: borderColor} , containerStyle]}>
       <Image
         loading="lazy"
         source={trackObject.album.images[0].url}
