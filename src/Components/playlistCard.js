@@ -1,5 +1,5 @@
 
-import { StyleSheet, Text, TouchableOpacity, SafeAreaView, View, ScrollView, TextInput, Linking } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, SafeAreaView, View, ScrollView, TextInput, Linking, FlatList } from 'react-native';
 import React, { useState } from 'react';
 import Popover from 'react-native-popover-view';
 import { LinearGradient } from "expo-linear-gradient";
@@ -40,6 +40,15 @@ export default function PlaylistCard() {
               locations={[0, 0.6, 0.95]}
             >
               <Text style={styles.tag}>Add To Existing Playlist</Text>
+              <View style={styles.scrollContainer}>
+                <View style={styles.albumContainer}>
+                  <Text style={styles.choosenAlbum}>Choosen Playlist</Text>
+                  <View style={styles.albumScrollImg}></View>
+                  <Text style={styles.choosenName}>PLaylistName</Text>
+                </View>
+                <ScrollView style={styles.albumListContainer} nestedScrollEnabled = {true}>
+                </ScrollView>
+              </View>
             </LinearGradient>
             </ScrollView>
           </Popover>
@@ -76,7 +85,7 @@ export default function PlaylistCard() {
       borderRadius: 20,
       textAlign: 'center',
       textAlignVertical: 'center',
-      color: 'white',
+      color: 'black',
       fontWeight: 'bold',
       fontSize: 20,
       marginTop: 2
@@ -97,6 +106,64 @@ export default function PlaylistCard() {
       borderRadius: 5,
       paddingHorizontal: 7.5,
       borderWidth: 1,
-
     },
+    scrollContainer: {
+      height: 264,
+      width: 309,
+      backgroundColor: '#101010',
+      marginTop: 24,
+      borderRadius: 10,
+      flexDirection: 'row',
+    },
+    albumContainer: {
+      height: 264,
+      width: 154.5,
+      backgroundColor: '#101010',
+      borderTopLeftRadius: 10,
+      borderBottomLeftRadius: 10,
+      borderRightWidth: 1,
+      borderColor: '#B3B3B3',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    albumListContainer: {
+      height: 264,
+      width: 154.5,
+      backgroundColor: '#101010',
+      borderTopRightRadius: 10,
+      borderBottomRightRadius: 10,
+      borderLeftWidth: 1,
+      borderColor: '#B3B3B3',
+    },
+    albumScrollImg: {
+      height: 120,
+      width: 120,
+      backgroundColor: 'white',
+      borderRadius: 5, 
+    },
+    choosenAlbum: {
+      backgroundColor: '#1ED760',
+      height: 30,
+      width: 135,
+      textAlign: 'center',
+      textAlignVertical: 'center',
+      marginBottom: 20,
+      borderRadius: 5,
+      color: 'black',
+      fontWeight: 'bold',
+      fontSize: 15,
+    },
+    choosenName: {
+      backgroundColor: '#323632',
+      height: 30,
+      width: 120,
+      textAlign: 'center',
+      textAlignVertical: 'center',
+      color: '#B3B3B3',
+      borderRadius: 5,
+      marginTop: 20,
+    }, 
+    dataList: {
+      padding: 20
+    }
   });

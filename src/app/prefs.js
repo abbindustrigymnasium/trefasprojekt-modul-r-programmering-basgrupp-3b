@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, SafeAreaView, Pressable } from 'react-native'
 import { Card } from 'react-native-paper'
-import * as Api from './TEMP/for-prefs'
-
+import * as Api from '../TEMP/for-prefs'
 const [genres, setGenres] = useState([])
 
 function renderArr (arr) {
