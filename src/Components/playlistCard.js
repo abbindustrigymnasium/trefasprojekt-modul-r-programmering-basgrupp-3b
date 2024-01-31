@@ -10,6 +10,23 @@ export default function PlaylistCard() {
   
   const [text, onChangeText] = React.useState('');
   const [showPopover, setShowPopover] = useState(false);
+  const DATA = [
+    {
+      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+      title: 'First Item',
+    },
+    {
+      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
+      title: 'Second Item',
+    },
+    {
+      id: '58694a0f-3da1-471f-bd96-145571e29d72',
+      title: 'Third Item',
+    },
+  ];
+  const Item = ({title}) => (
+    <Text style={styles.itemtitle}>{title}</Text>
+  );
   
       return (
         <SafeAreaView>
@@ -17,7 +34,7 @@ export default function PlaylistCard() {
             <Text>Press here to open popover!</Text>
           </TouchableOpacity>
           <Popover popoverStyle={styles.popOver} isVisible={showPopover} onRequestClose={() => setShowPopover(false)}>
-            <ScrollView contentContainerStyle={styles.Scrollview} style={styles.view}>
+            <ScrollView contentContainerStyle={styles.Scrollview} style={styles.view} nestedScrollEnabled={true} horizontal>
             <LinearGradient
               colors={['#48A04C', '#2E452F', '#101010' ]}
               style={styles.linearGradient}
@@ -46,8 +63,12 @@ export default function PlaylistCard() {
                   <View style={styles.albumScrollImg}></View>
                   <Text style={styles.choosenName}>PLaylistName</Text>
                 </View>
-                <ScrollView style={styles.albumListContainer} nestedScrollEnabled = {true}>
-                </ScrollView>
+                <FlatList
+                  data={DATA}
+                  renderItem={({item}) => <Item title={item.title} />}
+                  keyExtractor={item => item.id}
+                  style={styles.flatlist}
+                />
               </View>
             </LinearGradient>
             </ScrollView>
@@ -57,6 +78,14 @@ export default function PlaylistCard() {
     }
 
   const styles = StyleSheet.create({
+    flatlist: {
+      padding: 10,
+    },
+    itemtitle: {
+      fontSize: 17,
+      color: 'white',
+      padding: 2,
+    },
     Scrollview: {
       alignItems: 'center',
       justifyContent: 'center',
