@@ -12,13 +12,16 @@ import { Image } from "expo-image";
 
 import * as Linking from 'expo-linking';
 
+import { Link } from "expo-router";
+
 import {useWindowDimensions} from 'react-native';
 import {Audio} from 'expo-av'
 
-import Animated, { SlideInUp,useAnimatedStyle, useSharedValue, withSpring, withDecay, runOnJS, withRepeat, withTiming, Easing, withSequence, withDelay, FlipInEasyY, PinwheelIn, BounceIn, FadeInUp, StretchInX, ZoomIn, RollInLeft, LightSpeedInLeft, FadeIn} from 'react-native-reanimated';
+import Animated, { SlideInUp,useAnimatedStyle, useSharedValue, withSpring, withDecay, runOnJS, withRepeat, withTiming, Easing, withSequence, withDelay, FlipInEasyY, PinwheelIn, BounceIn, FadeInUp, StretchInX, ZoomIn, RollInLeft, LightSpeedInLeft, FadeIn, FlipInEasyX} from 'react-native-reanimated';
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 
 import TextTicker from "./TextTicker/";
+import InfoText from "./InfoText/";
 
 /**
  * Represents a Card component.
@@ -43,6 +46,7 @@ export default function Card({
     const borderColor= useSharedValue("transparent")
     const artistShower = React.useRef(null)
     const cardOpacity = useSharedValue(1.0)
+    const [showInfoText, setShowInfoText] = React.useState(false)
 
 
 
@@ -241,8 +245,9 @@ let drag = Gesture.Pan()
     <GestureDetector gesture={drag}>
     <Animated.View entering={index>0 ? FadeIn.duration(200).easing(Easing.ease) : null} onLayout={onLayout} className={`border-4 w-5/6 max-w-[340px]`} style={[{ borderColor: borderColor, backgroundColor: borderColor} , containerStyle]}>
       
-     
-      <Animated.View className="flex flex-col justify-center w-full bg-less-black px-5 py-5" style={{gap: "20px", opacity: cardOpacity}}>
+     <Animated.View className="flex flex-col justify-center w-full bg-less-black px-5 py-5" style={{opacity: cardOpacity}}>
+      
+      <View className="flex flex-col justify-center w-full"    style={{gap: "20px"}}>
       <Image
         loading="lazy"
         source={trackObject.album.images[0].url}
@@ -276,15 +281,21 @@ let drag = Gesture.Pan()
           />
         </Pressable>
          
-        <Pressable>
+         <Link href={`/info?id=${trackObject.id}&name=${trackObject.name}`}asChild>
+         <Pressable>
         <Image
           loading="lazy"
           source={require("../../assets/icons/info.svg")}
           className="aspect-square object-contain object-center w-8 overflow-hidden self-center shrink-0 max-w-full"
         />
         </Pressable>
+         </Link>
+        
       </View>
+      </View>
+            
       </Animated.View>
+
     </Animated.View>
     </GestureDetector>
   );
