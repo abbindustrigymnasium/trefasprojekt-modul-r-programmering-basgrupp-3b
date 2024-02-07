@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 const url = 'https://api.spotify.com/v1';
 
 // replace with actual AsyncStorage token 
@@ -41,6 +43,34 @@ export const spotifyRequestCustom = async (endpoint, method, custom_headers) => 
     console.error('Error fetching data from Spotify:', error);
   }
 };
+
+export const useSpotifyRequest = (endpoint) => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await spotifyRequest(endpoint);
+      setData(result);
+    };
+    fetchData();
+  }, [endpoint]);
+
+  return data;
+}
+
+export const useSpotifyRequestCustom = (endpoint, method, custom_headers) => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await spotifyRequestCustom(endpoint, method, custom_headers);
+      setData(result);
+    };
+    fetchData();
+  }, [endpoint, method, custom_headers]);
+
+  return data;
+}
 
 // Example usage:
 
