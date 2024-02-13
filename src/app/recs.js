@@ -8385,9 +8385,9 @@ function getCardState(state) {
   setCardState(state)
   if(Math.abs(state)>=2) {
     if(state===2) {
-      setLikedSongs([...likedSongs, sampleTrackResponse[cardIndex]])
+      setLikedSongs([...likedSongs, filteredTrackResponse[cardIndex]])
     }else if(state===-2) {
-      setHatedSongs([...hatedSongs, sampleTrackResponse[cardIndex]])
+      setHatedSongs([...hatedSongs, filteredTrackResponse[cardIndex]])
     }
     setCardIndex(cardIndex+1)
   }else {
@@ -8426,7 +8426,6 @@ const cardList = filteredTrackResponse.map((element, index) => {
     >
 </Card>) : null)
 })
-console.log(cardList)
 
 
 
