@@ -7,6 +7,7 @@ const AuthContext = React.createContext({
   signIn: () => null,
   signOut: () => null,
   session: null,
+  setSession: () => null,
   isLoading: false,
   request: null, 
 });
@@ -37,7 +38,8 @@ export function SessionProvider(props) {
         signOut: () => {
           setSession(null);
         },
-        session: new TokenResponse(session),
+        session: session!=null ? new TokenResponse(session) : session,
+        setSession: setSession,
         isLoading,
         request
       }}>

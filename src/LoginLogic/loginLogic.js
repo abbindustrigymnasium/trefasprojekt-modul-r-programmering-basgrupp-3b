@@ -6,7 +6,7 @@ import { makeRedirectUri, useAuthRequest, exchangeCodeAsync, TokenResponse } fro
 const discovery = {
     authorizationEndpoint: 'https://accounts.spotify.com/authorize',
     tokenEndpoint: 'https://accounts.spotify.com/api/token',
-  };
+};
   const clientId = '749b24029aaa4c558238fc1e0b9dd38a'
 
 

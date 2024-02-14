@@ -1,6 +1,9 @@
 import { Text, View } from 'react-native';
 
 import { useSession } from '../../Context/authContext';
+import { spotifyRequest } from '../../APICommunication/api_communicator';
+
+
 export default function Index() {
   const { signOut, session } = useSession();
   return (
@@ -8,9 +11,15 @@ export default function Index() {
       <Text
         onPress={() => {
           // The `app/(app)/_layout.tsx` will redirect to the sign-in screen.
-          signOut();
+          spotifyRequest("/recommendations/available-genre-seeds")
+            .then((response) => {
+              console.log(response);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         }}>
-        Sign Out
+        Get genres
       </Text>
     </View>
   );
