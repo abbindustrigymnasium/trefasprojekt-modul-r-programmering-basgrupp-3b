@@ -121,7 +121,6 @@ async function unloadSound() {
 
   React.useEffect((  ) => {
     
-    console.log(activeIndex, index, trackObject.name)
     if(activeIndex===index) {
       handleSound()
     }
