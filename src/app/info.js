@@ -52,7 +52,9 @@ export default function Info() {
       {/* Native modals have dark backgrounds on iOS, set the status bar to light content. */}
       <StatusBar style="light" />
       <Text className="text-2xl font-bold text-white mb-5">Song features</Text>
-      <View className="w-full h-full flex" style={{gap: "20px"}}>
+
+        { !data ? <Text className="text-white text-lg font-bold">We can't show any info for this song at the moment</Text>:
+        <View className="w-full h-full flex" style={{gap: "20px"}}>
         <View className="w-full flex flex-col" style={{gap: "10px"}}>
           <View className="w-full flex flex-row jusitfy-between">
           <View className="flex flex-row items-center w-1/2" style={{gap: "5px"}}>
@@ -111,6 +113,9 @@ export default function Info() {
    
         </View>
      
+        
+      }
+      
    
     </View>
   );
