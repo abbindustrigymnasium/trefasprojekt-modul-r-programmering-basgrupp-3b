@@ -6,28 +6,7 @@ import { Image } from 'expo-image';
 
 
 import PercentageShower from '../Components/PercentageShower';
-import TextTicker from '../Components/TextTicker';
-
-const sampleData = {
-  "acousticness": 0.00242,
-  "analysis_url": "https://api.spotify.com/v1/audio-analysis/2takcwOaAZWiXQijPHIx7B",
-  "danceability": 0.585,
-  "duration_ms": 237040,
-  "energy": 0.842,
-  "id": "2takcwOaAZWiXQijPHIx7B",
-  "instrumentalness": 0.00686,
-  "key": 9,
-  "liveness": 0.0866,
-  "loudness": -5.883,
-  "mode": 0,
-  "speechiness": 0.0556,
-  "tempo": 118.211,
-  "time_signature": 4,
-  "track_href": "https://api.spotify.com/v1/tracks/2takcwOaAZWiXQijPHIx7B",
-  "type": "audio_features",
-  "uri": "spotify:track:2takcwOaAZWiXQijPHIx7B",
-  "valence": 0.428
-}
+import {useSpotifyRequest} from '../APICommunication/api_communicator'
 
 function millisToMinutesAndSeconds(millis) {
   var minutes = Math.floor(millis / 60000);
@@ -47,6 +26,11 @@ export default function Info() {
 
 
   const local = useLocalSearchParams();
+
+
+  const data = useSpotifyRequest(`/audio-features/${local['id']}`)
+
+  
 
   
   // If the page was reloaded or navigated to directly, then the modal should be presented as
@@ -78,7 +62,7 @@ export default function Info() {
             className="aspect-square object-contain object-center w-10 overflow-hidden"
           />
       
-          <Text className="text-white text-lg font-bold">{sampleData.loudness} dB</Text>
+          <Text className="text-white text-lg font-bold">{data?.loudness} dB</Text>
         </View>
         <View className="flex flex-row items-center w-1/2" style={{gap: "5px"}}>
         <Image
@@ -87,19 +71,19 @@ export default function Info() {
             className="aspect-square object-contain object-center w-10 overflow-hidden"
           />
       
-          <Text className="text-white text-lg font-bold">{millisToMinutesAndSeconds(sampleData.duration_ms)} minutes </Text>
+          <Text className="text-white text-lg font-bold">{millisToMinutesAndSeconds(data?.duration_ms)} minutes </Text>
         </View>
           </View>
 
           <View className="w-full flex flex-row justify-between">
-          {sampleData.key!=-1 && <View className="flex flex-row items-center w-1/2 " style={{gap: "5px"}}>
+          {data?.key!=-1 && <View className="flex flex-row items-center w-1/2 " style={{gap: "5px"}}>
         <Image
             loading="lazy"
             source={require("../../assets/icons/music_note.svg")}
             className="aspect-square object-contain object-center w-10 overflow-hidden"
           />
       
-          <Text className="text-white text-lg font-bold">{pitchClassAndTones[sampleData.key]}</Text>
+          <Text className="text-white text-lg font-bold">{pitchClassAndTones[data?.key]}</Text>
         </View>}
         <View className="flex flex-row items-center  w-1/2" style={{gap: "5px"}}>
         <Image
@@ -108,7 +92,7 @@ export default function Info() {
             className="aspect-square object-contain object-center w-10 overflow-hidden"
           />
       
-          <Text className="text-white text-lg font-bold">{sampleData.tempo} BPM </Text>
+          <Text className="text-white text-lg font-bold">{data?.tempo} BPM </Text>
         </View>
           </View>
         
@@ -117,13 +101,13 @@ export default function Info() {
         </View>
      
    
-      <PercentageShower title="Acousticness" percentage={sampleData.acousticness}/>
-      <PercentageShower title="Danceability" percentage={sampleData.danceability}/>
-      <PercentageShower title="Energy" percentage={sampleData.energy}/>
-      <PercentageShower title="Instrumentalness" percentage={sampleData.instrumentalness}/>
-      <PercentageShower title="Liveness" percentage={sampleData.liveness}/>
-      <PercentageShower title="Speechiness" percentage={sampleData.speechiness}/>
-      <PercentageShower title="Valence" percentage={sampleData.valence}/>
+      <PercentageShower title="Acousticness" percentage={data?.acousticness}/>
+      <PercentageShower title="Danceability" percentage={data?.danceability}/>
+      <PercentageShower title="Energy" percentage={data?.energy}/>
+      <PercentageShower title="Instrumentalness" percentage={data?.instrumentalness}/>
+      <PercentageShower title="Liveness" percentage={data?.liveness}/>
+      <PercentageShower title="Speechiness" percentage={data?.speechiness}/>
+      <PercentageShower title="Valence" percentage={data?.valence}/>
    
         </View>
      
