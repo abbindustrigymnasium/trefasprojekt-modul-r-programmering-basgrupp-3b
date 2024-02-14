@@ -22,6 +22,7 @@ export const spotifyRequest = async (endpoint) => {
     return data;
   } catch (error) {
     console.error('Error fetching data from Spotify:', error);
+    return null
   }
 };
 
@@ -41,6 +42,7 @@ export const spotifyRequestCustom = async (endpoint, method, custom_headers) => 
     return data;
   } catch (error) {
     console.error('Error fetching data from Spotify:', error);
+    return null
   }
 };
 
