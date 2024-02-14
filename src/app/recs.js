@@ -5,7 +5,6 @@ import * as React from 'react'
 import Animated, { BounceIn, Easing, FadeIn, SlideInDown, SlideInLeft, SlideInRight, SlideInUp, SlideOutDown, SlideOutLeft, useAnimatedStyle, useSharedValue, withDecay, withSpring, withTiming } from 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context'
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { StatusBar } from 'expo-status-bar';
 
 import * as Haptics from 'expo-haptics';
 
@@ -8435,7 +8434,6 @@ const presentableTrackResponses = filteredTrackResponse.map((element, index) => 
     return (
       
         <GestureHandlerRootView className="flex-1 items-center justify-end bg-all-black" style={{paddingTop: insets.top, paddingBottom: insets.bottom}}>
-            <StatusBar style='light' />
           <View className=" h-full w-full flex flex-row justify-between items-end">
             
                 <Animated.View className="bg-red-500 h-12 rounded-r-full flex items-center justify-center "

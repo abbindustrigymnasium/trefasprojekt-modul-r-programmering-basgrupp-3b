@@ -10,6 +10,8 @@ import { StatusBar } from 'expo-status-bar'
 export default function Layout () {
     const insets = useSafeAreaInsets()
     return (
+      <>
+      <StatusBar style="light" />
         <Stack screenOptions={{
             headerStyle: {
                 backgroundColor: "#1fc654"
@@ -55,22 +57,11 @@ export default function Layout () {
             )
           },
           title: '',
-          headerTitle: () => (
-            <View style={{backgroundColor: 'red', width: '100%', height: '100%'}}>
-              <Image style={{ width: 40, height: 40}} source={require('../../assets/icons/logo.svg')}/>
-            </View>
-          ),
-          headerLeft: () => (
-            <View style={{backgroundColor: 'blue', width: 50, height: '100%'}}>
-              <Text>Left</Text>
-            </View>
-          ),
-          headerStyle: {
-            backgroundColor: "#101010"
-          }
-        }
-      }
+  
+      }}
       ></Stack.Screen>
       </Stack>
+      </>
+
     )
 }
