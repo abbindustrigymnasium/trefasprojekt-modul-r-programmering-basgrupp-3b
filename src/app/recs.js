@@ -8388,7 +8388,7 @@ function getCardState(state) {
     }else if(state===-2) {
       setHatedSongs([...hatedSongs, filteredTrackResponse[animateIndex.value]])
     }
-    animateIndex.value = withTiming(animateIndex.value +1, {duration: 300})
+    animateIndex.value = withTiming(animateIndex.value +1, {duration: 200})
     setActiveIndex(activeIndex+1)
   }
 
@@ -8400,11 +8400,11 @@ React.useEffect(() => {
 }, [cardState])
 
 const animatedRight = useAnimatedStyle(() => ({
-  width: withSpring(cardState===1 ? 110 : 80, {duration: 500})
+  width: withSpring(cardState===1 ? 110 : 80, {duration: 300})
 }));
 
 const animatedLeft = useAnimatedStyle(() => ({
-  width: withSpring(cardState===-1 ? 110 : 80, {duration: 500})
+  width: withSpring(cardState===-1 ? 110 : 80, {duration: 300})
 }));
 
 
