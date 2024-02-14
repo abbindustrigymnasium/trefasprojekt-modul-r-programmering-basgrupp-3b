@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { Link } from 'expo-router'
 
-import ApiCommunicator from '../APICommuncations/api_communicator'
+import ApiCommunicator from '../APICommunication/api_communicator'
 
 export default function Page () {
     return (
