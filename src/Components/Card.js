@@ -17,7 +17,7 @@ import { Link } from "expo-router";
 import {useWindowDimensions} from 'react-native';
 import {Audio} from 'expo-av'
 
-import Animated, { SlideInUp,useAnimatedStyle, useSharedValue, withSpring, withDecay, runOnJS, withRepeat, withTiming, Easing, withSequence, withDelay, FlipInEasyY, PinwheelIn, BounceIn, FadeInUp, StretchInX, ZoomIn, RollInLeft, LightSpeedInLeft, FadeIn, FlipInEasyX} from 'react-native-reanimated';
+import Animated, { SlideInUp,useAnimatedStyle, useSharedValue, withSpring, withDecay, runOnJS, withRepeat, withTiming, Easing, withSequence, withDelay, FlipInEasyY, PinwheelIn, BounceIn, FadeInUp, StretchInX, ZoomIn, RollInLeft, LightSpeedInLeft, FadeIn, FlipInEasyX, interpolate} from 'react-native-reanimated';
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 
 import TextTicker from "./TextTicker/";
@@ -34,61 +34,65 @@ import InfoText from "./InfoText/";
 export default function Card({
     index,
     trackObject,
-    getCardState
+    getCardState,
+    animateIndex,
+    activeIndex,
+    totalLength,
+    
 }) {
     const translateX = useSharedValue(0);
-    const translateY = useSharedValue(0);
+    const translateY = useSharedValue(0)
     const [hasSwiped, setHasSwiped] = React.useState(false)
     const rotation = useSharedValue("0deg")
     const {height, width} = useWindowDimensions();
     const [playing, setPlaying] = React.useState(false)
     const [timeThings, setTimeThings] = React.useState({playedSeconds: "00", duration: "30"})
     const borderColor= useSharedValue("transparent")
-    const artistShower = React.useRef(null)
     const cardOpacity = useSharedValue(1.0)
-    const [showInfoText, setShowInfoText] = React.useState(false)
+    const [sound, setSound] = React.useState();
+    const [waitingForAwait, setWaitingForAwait] = React.useState(false)
 
 
-
-    
-const [size, setSize] = React.useState({height: 200, width: 200})
-const [sound, setSound] = React.useState();
-const [myVariable, setMyVariable] = React.useState();
-const [waitingForAwait, setWaitingForAwait] = React.useState(false)
-
-
-React.useEffect(() => {
-    if(trackObject.preview_url===null) {
-        getCardState(3)
-    }else {
-        handleSound()
-    }
-
-}, [trackObject])
+    const visibleCards = 5
 
 
 async function handleSound() {
-
+  if(activeIndex === index) {
     if(!sound) {
+      setWaitingForAwait(true)
+      try {
         const { sound } = await Audio.Sound.createAsync({uri: trackObject.preview_url}, {shouldPlay:true})
         setSound(sound);
         sound.setOnPlaybackStatusUpdate(this._onPlaybackStatusUpdate);
-        sound.setIsLoopingAsync(true)
-        await sound.playAsync();
-    }else {
-        const status = await sound.getStatusAsync()
-        if(status.isPlaying) {
-            setWaitingForAwait(true)
-            await sound.pauseAsync()
-            setWaitingForAwait(false) 
-        }else {
-            setWaitingForAwait(true)
-            await sound.playAsync()
-            setWaitingForAwait(false)
-        }
+        await sound.setIsLoopingAsync(true)
+      }
+      catch(err) {
+        console.log(err)
+      }
+      setWaitingForAwait(false)
+  }else {
+    try {
+      const status = await sound.getStatusAsync()
+      if(status.isPlaying) {
+          setWaitingForAwait(true)
+          await sound.pauseAsync()
+          setWaitingForAwait(false) 
+      }else {
+          setWaitingForAwait(true)
+          await sound.playAsync()
+          setWaitingForAwait(false)
+      }
+    }catch(err) {
+      console.log(err)
     }
+  }
+  
+  }
+  
+
     
 }
+
 
 
 async function unloadSound() {
@@ -107,7 +111,6 @@ async function unloadSound() {
     }, [hasSwiped])
 
   React.useEffect(() => {
-    setMyVariable("jippi")
    
     return sound
       ? () => {
@@ -115,6 +118,16 @@ async function unloadSound() {
         }
       : undefined;
   }, [sound]);
+
+  React.useEffect((  ) => {
+    
+    console.log(activeIndex, index, trackObject.name)
+    if(activeIndex===index) {
+      handleSound()
+    }
+
+  }
+  , [activeIndex])
 
 
 
@@ -155,59 +168,59 @@ async function unloadSound() {
   };
 
 
-
-
-
-
-
 const onLayout=(event)=> {
   const {x, y, height, width} = event.nativeEvent.layout;
-  setSize({height: height, width: width})
 
   
 }
 
 let drag = Gesture.Pan()
     .onChange((event) => {
-      translateX.value = event.translationX
-      translateY.value = event.translationY
-      rotation.value = (((translateX.value/(width/2))*6+ "deg"))
-      if(Math.abs(event.translationX)>=(width*0.4)) {
-        runOnJS(getCardState)(event.translationX<0 ? -1 : 1)
-      }else {
-        borderColor.value = (event.translationX>0 ? `rgba(30, 215, 96, ${(Math.abs(translateX.value)/(width*0.4))})` : `rgba(244, 67, 54,  ${(Math.abs(translateX.value)/(width*0.4))})`)
-        cardOpacity.value = (1.0)
-        runOnJS(getCardState)(0)
-
-      }
-    }).onFinalize((event) => {
-        
-        if(Math.abs(event.translationX)<(width*0.4)) {
-            translateX.value = withSpring(0)
-            translateY.value = withSpring(0)
-            rotation.value = withSpring("0deg")
-            cardOpacity.value = (1.0)
-            borderColor.value = 'transparent'
-        }else  {
-                translateX.value = withDecay({
-                    clamp: [-width, width],
-                    velocity: event.translationX<0? -1000 : 1000,
-    
-                   
-                  },  (completed) => {
-                    if(completed) {
-                    runOnJS(setHasSwiped)(true)
-                    runOnJS(getCardState)(translateX.value > 0 ? 2 : -2)
-
-                
-                }})
-                translateY.value = withDecay({
-                    velocity: event.velocityY,
-    
-                })
-                rotation.value=withSpring("0deg")
-            
+      if(animateIndex.value === index) {
+        translateX.value = event.translationX
+        translateY.value = event.translationY
+        rotation.value = (((translateX.value/(width/2))*6+ "deg"))
+        if(Math.abs(event.translationX)>=(width*0.4)) {
+          runOnJS(getCardState)(event.translationX<0 ? -1 : 1)
+        }else {
+          borderColor.value = (event.translationX>0 ? `rgba(30, 215, 96, ${(Math.abs(translateX.value)/(width*0.4))})` : `rgba(244, 67, 54,  ${(Math.abs(translateX.value)/(width*0.4))})`)
+          cardOpacity.value = (1.0)
+          runOnJS(getCardState)(0)
+  
         }
+      }
+      
+    }).onFinalize((event) => {
+      if(animateIndex.value===index) {
+        if(Math.abs(event.translationX)<(width*0.4)) {
+          translateX.value = withSpring(0)
+          translateY.value = withSpring(0)
+          rotation.value = withSpring("0deg")
+          cardOpacity.value = (1.0)
+          borderColor.value = 'transparent'
+      }else  {
+              translateX.value = withDecay({
+                  clamp: [-width, width],
+                  velocity: event.translationX<0? -1000 : 1000,
+  
+                 
+                },  (completed) => {
+                  if(completed) {
+                  runOnJS(setHasSwiped)(true)
+                  runOnJS(getCardState)(translateX.value > 0 ? 2 : -2)
+
+              
+              }})
+              translateY.value = withDecay({
+                  velocity: event.velocityY,
+  
+              })
+              rotation.value=withSpring("0deg")
+          
+      }
+      }
+        
+        
 
     });
 
@@ -218,22 +231,33 @@ let drag = Gesture.Pan()
               translateX:  translateX.value
             },
             {
-              translateY: translateY.value
-            },
+              translateY: interpolate(
+                animateIndex.value,
+                [index-1, index, index+1],
+                [-15, translateY.value, 0 ]
+              )
+            },{
+            scale: interpolate(
+              animateIndex.value,
+              [index-1, index, index+1],
+              [0.96, 1, 1]
+            ),},
             {
                 rotate: rotation.value
-            }
+            },
+           
           ],
+          opacity: interpolate(
+            animateIndex.value,
+            [index-2, index-1, index, index+1],
+            [1-1/visibleCards, 1, 1, 1]
+          ),
+          position: "absolute",
+          zIndex: totalLength-index,
           display: hasSwiped ? "none" : "flex"
         };
       });
       
-
-    
-
-
-   
-
 
   
   
@@ -243,10 +267,8 @@ let drag = Gesture.Pan()
   return (
     
     <GestureDetector gesture={drag}>
-    <Animated.View entering={index>0 ? FadeIn.duration(200).easing(Easing.ease) : null} onLayout={onLayout} className={`border-4 w-5/6 max-w-[340px]`} style={[{ borderColor: borderColor, backgroundColor: borderColor} , containerStyle]}>
-      
+    <Animated.View onLayout={onLayout} className={`border-4 w-5/6 max-w-[340px] border-transparent`} style={[{ borderColor: borderColor, backgroundColor: borderColor} , containerStyle]}>
      <Animated.View className="flex flex-col justify-center w-full bg-less-black px-5 py-5" style={{opacity: cardOpacity}}>
-      
       <View className="flex flex-col justify-center w-full"    style={{gap: "20px"}}>
       <Image
         loading="lazy"

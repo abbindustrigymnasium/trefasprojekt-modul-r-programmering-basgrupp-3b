@@ -8374,10 +8374,9 @@ export default function Page () {
 
   const insets = useSafeAreaInsets();
   const sizes = useSharedValue({red: 100, green: 100})  
-
-
 const [cardState, setCardState] = React.useState(0)
-const [cardIndex, setCardIndex] = React.useState(0)
+const animateIndex = useSharedValue(0)
+const [activeIndex, setActiveIndex] = React.useState(0)
 const [likedSongs, setLikedSongs] = React.useState([])
 const [hatedSongs, setHatedSongs] = React.useState([])
 
@@ -8385,19 +8384,18 @@ function getCardState(state) {
   setCardState(state)
   if(Math.abs(state)>=2) {
     if(state===2) {
-      setLikedSongs([...likedSongs, filteredTrackResponse[cardIndex]])
+      setLikedSongs([...likedSongs, filteredTrackResponse[animateIndex.value]])
     }else if(state===-2) {
-      setHatedSongs([...hatedSongs, filteredTrackResponse[cardIndex]])
+      setHatedSongs([...hatedSongs, filteredTrackResponse[animateIndex.value]])
     }
-    setCardIndex(cardIndex+1)
-  }else {
+    animateIndex.value = withTiming(animateIndex.value +1, {duration: 300})
+    setActiveIndex(activeIndex+1)
   }
 
 };
 
 React.useEffect(() => {
   Math.abs(cardState)===1 ?  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium): null
-
 
 }, [cardState])
 
@@ -8410,6 +8408,7 @@ const animatedLeft = useAnimatedStyle(() => ({
 }));
 
 
+
 const filteredTrackResponse = React.useMemo(() => {
   return (sampleTrackResponse.filter((element, index) => {  
     return element.preview_url!=null
@@ -8417,16 +8416,18 @@ const filteredTrackResponse = React.useMemo(() => {
 }, [sampleTrackResponse])
 
 
-const cardList = filteredTrackResponse.map((element, index) => {
-   return ((cardIndex === index)  ? ( <Card 
-            key={index}
-            index={index}
-            trackObject={filteredTrackResponse[cardIndex]}
-            getCardState={getCardState}
-    >
-</Card>) : null)
+const presentableTrackResponses = filteredTrackResponse.map((element, index) => {
+  return <Card 
+           key={index}
+           index={index}
+           animateIndex={animateIndex}
+           activeIndex={activeIndex}
+           totalLength={filteredTrackResponse.length}
+           trackObject={element}
+           getCardState={getCardState}
+   >
+</Card>
 })
-
 
 
 
@@ -8467,7 +8468,7 @@ const cardList = filteredTrackResponse.map((element, index) => {
                 </Animated.View>
             </View>
           <View className=" h-[85%] w-full flex-col items-center justify-center">
-                  {cardList}
+                {presentableTrackResponses.slice(activeIndex,activeIndex+5)}
    
 
           </View>
