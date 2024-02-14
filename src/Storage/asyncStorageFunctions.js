@@ -1,26 +1,32 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React from 'react';
+
+function useAsyncState(
+  initialValue = [true, null]
+){
+  return React.useReducer(
+    (state, action) => [false, action],
+    initialValue
+  )
+}
 
 
-
-export const storeStringData = async (key, value) => {
+export const storeDataAsync = async (key, value) => {
     try {
-      await AsyncStorage.setItem(key, value);
+        if(value === null){
+            await AsyncStorage.removeItem(key);
+        }else{
+            const jsonValue = JSON.stringify(value);
+            await AsyncStorage.setItem(key, jsonValue);
+        }
+     
     } catch (e) {
       // saving error
     }
   };
 
-export const storeObjectData = async (key, value) => {
-    try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem(key, jsonValue);
-    } catch (e) {
-      // saving error
-    }
-  };
 
-
-export const getStringData = async (key) => {
+const getStringData = async (key) => {
     try {
       const value = await AsyncStorage.getItem(key);
 
@@ -33,7 +39,7 @@ export const getStringData = async (key) => {
     }
   };
 
-export const getObjectData = async (key) => {
+const getObjectData = async (key) => {
     try {
       const jsonValue = await AsyncStorage.getItem(key);
       return jsonValue != null ? JSON.parse(jsonValue) : null;
@@ -41,3 +47,24 @@ export const getObjectData = async (key) => {
       // error reading value
     }
   };
+
+export function useStorageState(key) {
+    const [state, setState] = useAsyncState();
+  
+    React.useEffect(() => {
+      getObjectData(key).then(( value ) => {
+        setState(value);
+      });
+    }, [key]);
+  
+    const setValue = React.useCallback(
+      value => {
+        setState(value);
+        storeDataAsync(key, value);
+      },
+      [key]
+    );
+  
+    return [state, setValue];
+
+}

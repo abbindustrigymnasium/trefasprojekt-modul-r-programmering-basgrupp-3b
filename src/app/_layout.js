@@ -1,25 +1,11 @@
-import { Stack } from 'expo-router'
+import { Stack, Slot } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
+import { SessionProvider } from '../Context/authContext'
 
-export default function Layout () {
+export default function Root () {
     return (
-        <>
-        <StatusBar style="light" />
-        <Stack screenOptions={{
-            headerStyle: {
-                backgroundColor: "#101010"
-            }
-        }} >
-
-            <Stack.Screen name="login"
-            options={{
-                header: () => null
-            }}
-            />
-
-            </Stack>
-
-            </>
-
+        <SessionProvider>
+            <Slot />
+    </SessionProvider>
     )
 }
