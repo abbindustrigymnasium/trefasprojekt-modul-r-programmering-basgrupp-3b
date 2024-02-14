@@ -4,8 +4,16 @@ export default function Layout () {
     return (
         <Stack screenOptions={{
             headerStyle: {
-                backgroundColor: "#1fc654"
+                backgroundColor: "#101010"
             }
-        }} />
+        }} >
+
+            <Stack.Screen name="login"
+            options={{
+                header: () => null
+            }}
+            />
+
+            </Stack>
     )
 }
