@@ -1,5 +1,5 @@
 
-import { StyleSheet, Text, TouchableOpacity, SafeAreaView, View, ScrollView, TextInput, FlatList, Pressable } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, SafeAreaView, View, ScrollView, TextInput, FlatList, Pressable, Switch } from 'react-native';
 import React, { useState } from 'react';
 import Popover from 'react-native-popover-view';
 import { LinearGradient } from "expo-linear-gradient";
@@ -12,6 +12,8 @@ export default function PlaylistCard() {
   const [text, onChangeText] = React.useState('');
   const [showPopover, setShowPopover] = useState(false);
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   const DATA = {
     "href": "https://api.spotify.com/v1/users/lovisa_bylund/playlists?offset=0&limit=10",
@@ -828,6 +830,19 @@ export default function PlaylistCard() {
     ]
   }
   
+  const firstFourImages = [];
+    imgDATA.tracks.forEach(track => {
+      if (track.album && track.album.images) {
+        track.album.images.forEach((image, index) => {
+          if (index < 1) {
+            if (firstFourImages.length < 4) {
+              firstFourImages.push(image.url);
+            }
+          }
+        });
+      }
+    });
+    
   const filteredPlaylists = DATA.items.filter(item => item.owner.uri === 'spotify:user:lovisa_bylund');
 
   const Item = ({ item, onPress }) => (
@@ -839,8 +854,9 @@ export default function PlaylistCard() {
   const handlePress = (chosenItem) => {
     setSelectedPlaylist(chosenItem);
   };
-
   
+
+
       return (
         <SafeAreaView>
           <TouchableOpacity onPress={() => setShowPopover(true)}>
@@ -854,14 +870,34 @@ export default function PlaylistCard() {
               locations={[0, 0.6, 0.95]}
             >
               <Text style={styles.tag}>Create New Playlist</Text>
-              <View style={styles.img}></View>
-              <TextInput style={styles.name}
-                    editable
-                    onChangeText={onChangeText}
-                    value={text}
-                    placeholder="Name"
-                    placeholderTextColor="#B3B3B3" 
+              <View style={styles.art}>
+                {firstFourImages.map((imageUrl, index) => (
+                  <View key={index} style={styles.column}>
+                    <Image
+                      source={{ uri: imageUrl }}
+                      style={styles.img}
+                    />
+                  </View>
+                ))}
+              </View>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <TextInput style={styles.name}
+                  editable
+                  onChangeText={onChangeText}
+                  value={text}
+                  placeholder="Name"
+                  placeholderTextColor="#B3B3B3" 
                 />
+                <View style={{marginTop: 16, marginLeft: 20}}>
+                  <Text style={{color: '#B3B3B3', marginBottom: -8}}>Private</Text>
+                    <Switch
+                      trackColor={{false: '#323632', true: '#63A47A'}}
+                      thumbColor={isEnabled ? '#1ED760' : '#B3B3B3'}
+                      onValueChange={toggleSwitch}
+                      value={isEnabled}
+                    />
+                </View>
+              </View>
               
             </LinearGradient>
             <LinearGradient
@@ -874,7 +910,8 @@ export default function PlaylistCard() {
                 <View style={styles.albumContainer}>
                   <Text style={styles.choosenAlbum}>Choosen Playlist</Text>
                   <View style={styles.albumScrollImg}>
-                    <Image source={{uri: selectedPlaylist.images[0].url}} style={{width: 120, height: 120, borderRadius: 5}} />
+                    <Image source={{uri: selectedPlaylist == null ? 'https://cdn.getmidnight.com/b5a0b552ae89a91aa34705031852bd16/2022/08/1_1---2022-08-24T165236.013-1.png' : selectedPlaylist.images[0].url}} 
+                    style={{width: 120, height: 120, borderRadius: 5}} />
                   </View>
                   <Text style={styles.choosenName}>{selectedPlaylist ? selectedPlaylist.name : "Choose a playlist"}</Text>
                 </View>
@@ -893,6 +930,10 @@ export default function PlaylistCard() {
     }
 
   const styles = StyleSheet.create({
+    img: {
+      height: 50,
+      width: 50,
+    },
     flatlist: {
       paddingHorizontal: 5
     },
@@ -934,12 +975,21 @@ export default function PlaylistCard() {
       fontSize: 20,
       marginTop: 2
     },
-    img: {
+    art: {
       backgroundColor: 'white',
       height: 210,
       width: 210,
-      borderRadius: 20,
-      marginTop: 28
+      marginTop: 28,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+    },
+    column: {
+      width: '50%'
+    },
+    img: {
+      width: '100%',
+      height: 105, // Adjust the height of the images as needed
+      resizeMode: 'cover',
     },
     name: {
       backgroundColor: '#323632',
