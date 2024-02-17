@@ -37,8 +37,6 @@ export const useLogin = ({signInAction}) => {
       );
     
       React.useEffect(() => {
-        console.log("OG RES", response)
-        console.log("Request")
         if (response?.type === 'success') {
           const { code } = response.params;
           const config = {
@@ -55,7 +53,6 @@ export const useLogin = ({signInAction}) => {
                 signInAction(res)
                       }).catch((e) => console.log('error', e));
 
-                console.log(tokenResponse)
           
         }
       }, [response]);
@@ -67,11 +64,9 @@ export const useLogin = ({signInAction}) => {
 }
 
 export async function refreshToken({token, signInAction}) {
-    console.log("refreshing token")
     if(token === null) {console.log('No token to refresh'); return}
     try {
     const response = await new TokenResponse(token).refreshAsync({clientId: clientId}, discovery)
-    console.log("response", response)
     signInAction(response)
     return response
     } catch (e) {
