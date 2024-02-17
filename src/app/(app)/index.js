@@ -19,15 +19,11 @@ export default function Index() {
       <Text
         onPress={() => {
           // The `app/(app)/_layout.tsx` will redirect to the sign-in screen.
-          fetchData();
+          signOut();
         }}>
-        Get genres
+        signOut
       </Text>
-      { data &&
-        <Text>
-        {JSON.stringify(data)}
-      </Text>
-      }
+    
       
     </View>
   );
