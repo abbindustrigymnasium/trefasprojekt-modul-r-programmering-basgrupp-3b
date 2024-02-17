@@ -45,7 +45,6 @@ export default function LoginButton() {
       style={{gap: 10}}
       onPress={ async () => {
         await signIn()
-        console.log("pressed")
         setShouldRedirect(true)
     
     
