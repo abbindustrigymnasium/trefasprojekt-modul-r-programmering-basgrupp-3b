@@ -1,33 +1,22 @@
 import { useEffect, useState } from "react";
 import {getObjectData, storeDataAsync} from '../Storage/asyncStorageFunctions'
 import {TokenResponse} from 'expo-auth-session'
+import { useSession } from "../Context/authContext";
+
 const url = 'https://api.spotify.com/v1';
 
 // replace with actual AsyncStorage token 
 
 
-export const spotifyRequest = async (endpoint) => {
-  let session = await getObjectData('session')
+const spotifyRequest = async ({endpoint, method="GET", auth_token, costum_headers={}, data} ) => {
 
-  if(!session) {
-    console.log("No session")
-    return null
-  }else {
-    session = new TokenResponse(session)
-    if(session.shouldRefresh()) {
-      console.log("refreshing")
-      await session.refreshAsync({},{tokenEndpoint: "https://accounts.spotify.com/api/token"}).then(async (res) => {
-        await storeDataAsync(res)
-      }
-      )
-
-    }
+  costum_headers['Authorization'] = `Bearer ${auth_token}`
     try {
       const response = await fetch(url + endpoint, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${session.accessToken}`
-        }
+        method: method,
+        headers: costum_headers,
+        body: data ? JSON.stringify(data) : null
+
       });
   
       if (!response.ok) {
@@ -40,56 +29,56 @@ export const spotifyRequest = async (endpoint) => {
       console.error('Error fetching data from Spotify:', error);
       return null
     }
-  }
+  
  
 };
 
-export const spotifyRequestCustom = async (endpoint, method, custom_headers) => {
-  custom_headers['Authorization'] = `Bearer ${token}`
-  try {
-    const response = await fetch(url + endpoint, {
-      method: method,
-      headers: custom_headers
-    });
+export const useSpotifyRequest = ({endpoint, method, costum_headers,  body, fetchDirectly}) => {
+  const [data, setData] = useState(null);
+  const {session, refreshSession} = useSession();
+  
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+  const fetchFromSpotify = async (URL) => {
+    if (session === null) {
+      console.log('No session token found');
+      return;
     }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching data from Spotify:', error);
-    return null
-  }
-};
-
-export const useSpotifyRequest = (endpoint) => {
-  const [data, setData] = useState(null);
+      if(session.shouldRefresh()) {
+        const newSession = await refreshSession().accessToken
+        const result = await spotifyRequest(
+          {
+            endpoint: URL ? URL : endpoint,
+            method: method,
+            auth_token: newSession.accessToken,
+            costum_headers: costum_headers,
+            data: body
+          }
+          );
+        setData(result);
+      }else {
+        const result = await spotifyRequest(
+          {
+            endpoint: URL ? URL : endpoint,
+            method: method,
+            auth_token: session.accessToken,
+            costum_headers: costum_headers,
+            data: body
+          }
+          );
+        setData(result);
+      }
+    
+    
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const result = await spotifyRequest(endpoint);
-      setData(result);
-    };
-    fetchData();
-  }, [endpoint]);
+    if (fetchDirectly) {
+      fetchFromSpotify(endpoint);
 
-  return data;
-}
+    }
+  }, [endpoint, fetchDirectly]);
 
-export const useSpotifyRequestCustom = (endpoint, method, custom_headers) => {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await spotifyRequestCustom(endpoint, method, custom_headers);
-      setData(result);
-    };
-    fetchData();
-  }, [endpoint, method, custom_headers]);
-
-  return data;
+  return [data, fetchFromSpotify];
 }
 
 // Example usage:

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Alert } from 'react-native';
 import { makeRedirectUri, useAuthRequest, exchangeCodeAsync, TokenResponse } from 'expo-auth-session';
 
 
@@ -10,7 +11,7 @@ const discovery = {
   const clientId = '749b24029aaa4c558238fc1e0b9dd38a'
 
 
-export const useLoginLogic = ({signInAction}) => {
+export const useLogin = ({signInAction}) => {
     const [tokenResponse, setTokenResponse] = React.useState(null);
 
     const [request, response, promptAsync] = useAuthRequest(
@@ -36,6 +37,8 @@ export const useLoginLogic = ({signInAction}) => {
       );
     
       React.useEffect(() => {
+        console.log("OG RES", response)
+        console.log("Request")
         if (response?.type === 'success') {
           const { code } = response.params;
           const config = {
@@ -57,6 +60,30 @@ export const useLoginLogic = ({signInAction}) => {
         }
       }, [response]);
 
+
+
     return {request, promptAsync}
 
 }
+
+export async function refreshToken({token, signInAction}) {
+    console.log("refreshing token")
+    if(token === null) {console.log('No token to refresh'); return}
+    try {
+    const response = await new TokenResponse(token).refreshAsync({clientId: clientId}, discovery)
+    console.log("response", response)
+    signInAction(response)
+    return response
+    } catch (e) {
+      console.log("Error refresing", e)
+      Alert.alert("Lost connection to Spotify, please sign in again", "You will now be signed out, and redirected to the sign in page.",
+      [{
+        text: "OK",
+        onPress: () => signInAction(null)
+      }]
+      )
+
+
+    }
+  }
+
