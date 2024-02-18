@@ -328,36 +328,9 @@ const bottom = StyleSheet.create({
     },
 })
 
-const selected = StyleSheet.create({
-    body: {
-        paddingHorizontal: '3.75%',
-    },
-    item: {
-        backgroundColor: '#1e1e1e',
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 4,
-        marginRight: 8,
-        padding: 3,
-        paddingHorizontal: 6,
-        borderRadius: 8,
-    },
-    text: {
-        color: '#B4b3b3',
-        fontWeight: 700,
-        fontSize: 16,
-    },
-    removeButton: {
-        color: '#595959',
-        paddingTop: 3,
-        paddingRight: 2.5,
-        paddingLeft: 5,
-    },
-})
-
 const list = StyleSheet.create({
     body: {
-        maxHeight: 240,
+        maxHeight: 207.5,
         width: '100%',
         paddingHorizontal: 8,
     },
@@ -382,5 +355,32 @@ const list = StyleSheet.create({
         marginLeft: 2.5,
         fontSize: 16,
         paddingBottom: 1,
+    },
+})
+
+const selected = StyleSheet.create({
+    body: {
+        paddingHorizontal: '3.75%',
+    },
+    item: {
+        backgroundColor: '#1e1e1e',
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 4,
+        marginRight: 8,
+        padding: 3,
+        paddingHorizontal: 6,
+        borderRadius: 8,
+    },
+    text: {
+        color: '#B4b3b3',
+        fontWeight: 700,
+        fontSize: 16,
+    },
+    removeButton: {
+        color: '#595959',
+        paddingTop: 3,
+        paddingRight: 2.5,
+        paddingLeft: 5,
     },
 })

@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Text, View, StyleSheet, Pressable, Image } from 'react-native'
+import { router } from 'expo-router'
 import Selector from '../Preferences/selector'
+import { storeStringData } from '../Storage/asyncStorageFunctions'
 
 var selected = {
     genres: [],
@@ -59,6 +61,8 @@ export default function App () {
         }
 
         console.log('/recommendations?' + query)
+        storeStringData('recs_endpoint', '/recommendations?' + query)
+        router.replace('/')
     }
 
     const [currentPage, setPage] = useState("Tracks")
