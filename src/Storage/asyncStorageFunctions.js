@@ -37,7 +37,7 @@ const getStringData = async (key) => {
     } catch (e) {
       // error reading value
     }
-  };
+}
 
 export const getObjectData = async (key) => {
     try {
