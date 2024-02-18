@@ -301,7 +301,7 @@ const containerStyles = StyleSheet.create({
     },
     selection: {
         flexDirection: 'row',
-        height: 'fit-content',
+        height: 'auto',
         flexWrap: 'wrap',
     },
     textContainer: {
