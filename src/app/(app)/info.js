@@ -39,8 +39,10 @@ export default function Info () {
 
 
     return (
+        
 
         <View className="flex-1 bg-all-black items-start justify-start px-5 py-5">
+            
             {/* Use `../` as a simple way to navigate to the root. This is not analogous to "goBack". */}
             {!isPresented && <Pressable onPress={() => { router.back() }} ><Text>Dismiss</Text></Pressable>}
             {/* Native modals have dark backgrounds on iOS, set the status bar to light content. */}
