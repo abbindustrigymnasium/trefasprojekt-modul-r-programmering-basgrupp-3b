@@ -28,7 +28,11 @@ export default function Info () {
     const local = useLocalSearchParams()
 
 
-    const data = useSpotifyRequest(`/audio-features/${local['id']}`)
+    const [data, fetchData] = useSpotifyRequest({
+        endpoint: `/audio-features/${local['id']}`,
+        method: 'GET',
+        fetchDirectly: true
+    })
 
 
 
