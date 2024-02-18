@@ -1,14 +1,17 @@
 
 
 import { Redirect, Stack, router  } from 'expo-router'
-import { Text, View } from 'react-native'
+import { Text, View, Pressable } from 'react-native'
+import {Image} from 'expo-image'
 import { StatusBar } from 'expo-status-bar'
 import { useSession } from '../../Context/authContext'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function AppLayout () {
     const {session, isLoading} = useSession()
-    
+    const insets = useSafeAreaInsets()
+
     if(isLoading) {
         return <Text>Loading...</Text>
     }
@@ -21,9 +24,9 @@ export default function AppLayout () {
         <GestureHandlerRootView style={{flex: 1}}>
         <StatusBar style="light" />
         <Stack screenOptions={{
-            headerStyle: {
-                backgroundColor: "#101010"
-            }
+            header: (props) => <View style={{paddingTop: insets.top}} className="bg-all-black">
+
+            </View>
         }} >
             <Stack.Screen
             name="info"
@@ -40,7 +43,34 @@ export default function AppLayout () {
               presentation: 'modal',	        
             }}	        
             />
+           <Stack.Screen
+      name="recs"
+      options={
+        {
+          header:(props) => {
+            return (
+              <View className="bg-all-black flex flex-row py-3 px-3 justify-between w-full" style={{paddingTop: insets.top}}>
+                <Pressable
+                className="flex flex-row justify-center items-center"
+                onPress={() => props.navigation.goBack()}
+                >
+                <Image loading="lazy"
+                className="aspect-square object-contain object-center w-6 overflow-hidden self-center shrink-0 max-w-full"
+                source={require('../../../assets/icons/arrow_back.svg')}/>
+                </Pressable>
+                 
 
+                <Image loading="lazy" 
+                contentFit='contain'
+                className="aspect-square object-center w-12 overflow-hidden self-center shrink-0 max-w-full"
+                source={require('../../../assets/icons/logo.png')}/>
+              </View>
+            )
+          },
+          title: '',
+  
+      }}
+      ></Stack.Screen>
             
 
             </Stack>
