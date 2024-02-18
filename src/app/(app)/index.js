@@ -63,7 +63,7 @@ export default function App () {
 
         console.log('/recommendations?' + query)
         storeStringData('/recommendations?' + query)
-        router.push('/recs?q=/recommendations?' + query)
+        router.push('/recs?q=/recommendations%3F' + query)
     }
 
     const [currentPage, setPage] = useState()

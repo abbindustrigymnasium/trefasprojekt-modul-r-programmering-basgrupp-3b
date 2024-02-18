@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native'
+import { Gesture } from 'react-native-gesture-handler'
 
 export default function App () {
     return (
-        <View style={styles.container}>
-            <Text>App.js</Text>
-        </View>
+        <GestureHandlerRootView>
+        </GestureHandlerRootView>
     )
 }
 

@@ -4,6 +4,7 @@ import { Redirect, Stack, router  } from 'expo-router'
 import { Text } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { useSession } from '../../Context/authContext'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 export default function AppLayout () {
     const {session, isLoading} = useSession()
@@ -17,7 +18,7 @@ export default function AppLayout () {
     }
 
     return (
-        <>
+        <GestureHandlerRootView style={{flex: 1}}>
         <StatusBar style="light" />
         <Stack screenOptions={{
             headerStyle: {
@@ -29,7 +30,7 @@ export default function AppLayout () {
 
             </Stack>
 
-            </>
+            </GestureHandlerRootView>
 
     )
 }
