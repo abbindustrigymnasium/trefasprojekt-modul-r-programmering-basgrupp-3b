@@ -436,10 +436,10 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
 
       return (
         <SafeAreaView>
-          <Popover popoverStyle={styles.popOver} isVisible={showPopover} onRequestClose={() => setShowPopover(false)}>
+          <Popover backgroundStyle={{backgroundColor: "rgba(0,0,0, 0.9)"}} popoverStyle={styles.popOver} isVisible={showPopover} onRequestClose={() => setShowPopover(false)}>
             <ScrollView 
               contentContainerStyle={styles.Scrollview} 
-              style={styles.view} nestedScrollEnabled={true} 
+              nestedScrollEnabled={true} 
               horizontal
             >
               <LinearGradient
@@ -523,12 +523,11 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
     Scrollview: {
       alignItems: 'center',
       justifyContent: 'center',
-      paddingTop: 90,
     },
     view: {
       height: 600,
       width: 390,
-      backgroundColor: 'rgba(0,0,0,0.5)'
+      backgroundColor: 'transparent'
     },
     linearGradient: {
       alignItems: 'center',
@@ -538,9 +537,11 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
       padding: 30,
       margin: 20
     },
-    popOver:{
-      borderRadius: 15,
+    popOver: {
+      backgroundColor: 'transparent',
+
     },
+    
     tag: {
       backgroundColor: '#1ED760',
       height: 33,
