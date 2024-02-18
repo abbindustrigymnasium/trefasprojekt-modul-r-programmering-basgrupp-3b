@@ -17,7 +17,7 @@ const PercentageShower = ({
 
 }) => {
     return (
-    <View className="w-full flex-col items-start jusitfy-start " style={{gap: "10px"}}>
+    <View className="w-full flex-col items-start jusitfy-start " style={{gap: 10}}>
         <Text className="text-white text-xl font-bold">{title}</Text>
         <View className="w-full h-2 bg-less-black rounded-full overflow-hidden flex ">
       <View className={`h-full bg-spott-green`} style={{width: `${percentage*100}%`}}></View>

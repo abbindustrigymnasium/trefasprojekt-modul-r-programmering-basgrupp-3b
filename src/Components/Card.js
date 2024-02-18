@@ -268,7 +268,7 @@ let drag = Gesture.Pan()
     <GestureDetector gesture={drag}>
     <Animated.View onLayout={onLayout} className={`border-4 w-5/6 max-w-[340px] border-transparent`} style={[{ borderColor: borderColor, backgroundColor: borderColor} , containerStyle]}>
      <Animated.View className="flex flex-col justify-center w-full bg-less-black px-5 py-5" style={{opacity: cardOpacity}}>
-      <View className="flex flex-col justify-center w-full"    style={{gap: "20px"}}>
+      <View className="flex flex-col justify-center w-full"    style={{gap: 20}}>
       <Image
         loading="lazy"
         source={trackObject.album.images[0].url}

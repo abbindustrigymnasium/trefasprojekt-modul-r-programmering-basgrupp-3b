@@ -54,10 +54,10 @@ export default function Info () {
             <Text className="text-2xl font-bold text-white mb-5">Song features</Text>
 
             {!data ? <Text className="text-white text-lg font-bold">We can't show any info for this song at the moment</Text> :
-                <View className="w-full h-full flex" style={{ gap: "20px" }}>
-                    <View className="w-full flex flex-col" style={{ gap: "10px" }}>
+                <View className="w-full h-full flex" style={{ gap: 20 }}>
+                    <View className="w-full flex flex-col" style={{ gap: 10 }}>
                         <View className="w-full flex flex-row jusitfy-between">
-                            <View className="flex flex-row items-center w-1/2" style={{ gap: "5px" }}>
+                            <View className="flex flex-row items-center w-1/2" style={{ gap: 5 }}>
                                 <Image
                                     loading="lazy"
                                     source={require("../../../assets/icons/speaker.svg")}
@@ -66,7 +66,7 @@ export default function Info () {
 
                                 <Text className="text-white text-lg font-bold">{data?.loudness} dB</Text>
                             </View>
-                            <View className="flex flex-row items-center w-1/2" style={{ gap: "5px" }}>
+                            <View className="flex flex-row items-center w-1/2" style={{ gap: 5}}>
                                 <Image
                                     loading="lazy"
                                     source={require("../../../assets/icons/duration.svg")}
@@ -78,7 +78,7 @@ export default function Info () {
                         </View>
 
                         <View className="w-full flex flex-row justify-between">
-                            {data?.key != -1 && <View className="flex flex-row items-center w-1/2 " style={{ gap: "5px" }}>
+                            {data?.key != -1 && <View className="flex flex-row items-center w-1/2 " style={{ gap: 5 }}>
                                 <Image
                                     loading="lazy"
                                     source={require("../../../assets/icons/music_note.svg")}
@@ -87,7 +87,7 @@ export default function Info () {
 
                                 <Text className="text-white text-lg font-bold">{pitchClassAndTones[data?.key]}</Text>
                             </View>}
-                            <View className="flex flex-row items-center  w-1/2" style={{ gap: "5px" }}>
+                            <View className="flex flex-row items-center  w-1/2" style={{ gap: 5 }}>
                                 <Image
                                     loading="lazy"
                                     source={require("../../../assets/icons/speed.svg")}
