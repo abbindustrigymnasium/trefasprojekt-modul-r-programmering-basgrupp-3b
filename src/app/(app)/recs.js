@@ -12,6 +12,7 @@ import * as Haptics from 'expo-haptics'
 
 import Card from '../../Components/Card'
 import { useSpotifyRequest} from '../../APICommunication/api_communicator'
+import PlaylistCard from '../../Components/playlistCard'
 
 
 export default function Page () {
@@ -24,6 +25,7 @@ export default function Page () {
     const [likedSongs, setLikedSongs] = React.useState([])
     const [hatedSongs, setHatedSongs] = React.useState([])
     const searchParams = useLocalSearchParams()
+    const [showPlaylistPopover, setShowPlaylistPopover] = React.useState(false)
 
 
     const [trackResponse, fetchFromSpotify] = useSpotifyRequest({ endpoint: searchParams['q'], method: 'GET', fetchDirectly: true })
@@ -123,10 +125,12 @@ export default function Page () {
             </View>
 
             <Pressable
-                onPress={() => { router.push("/playlist") }}
+                onPress={() => { setShowPlaylistPopover(true)}}
                 className=" bg-spott-green w-5/6 max-w-[340px] py-5 flex rounded-2xl items-center justify-center">
                 <Text className=" font-semibold text-2xl ">Done</Text>
             </Pressable>
+
+            <PlaylistCard showPopover={showPlaylistPopover} setShowPopover={setShowPlaylistPopover} likedSongs={{...trackResponse, ["tracks"]: likedSongs}}/>
 
 
 
