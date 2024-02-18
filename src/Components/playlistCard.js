@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Popover from 'react-native-popover-view';
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from 'expo-image';
+import { useSpotifyRequest } from '../APICommunication/api_communicator';
 
 
 
@@ -829,7 +830,8 @@ export default function PlaylistCard() {
       }
     ]
   }
-  
+  // const data = useSpotifyRequest('/me/playlist')
+
   const firstFourImages = [];
     imgDATA.tracks.forEach(track => {
       if (track.album && track.album.images) {
@@ -863,67 +865,71 @@ export default function PlaylistCard() {
             <Text>Press here to open popover!</Text>
           </TouchableOpacity>
           <Popover popoverStyle={styles.popOver} isVisible={showPopover} onRequestClose={() => setShowPopover(false)}>
-            <ScrollView contentContainerStyle={styles.Scrollview} style={styles.view} nestedScrollEnabled={true} horizontal>
-            <LinearGradient
-              colors={['#48A04C', '#2E452F', '#101010' ]}
-              style={styles.linearGradient}
-              locations={[0, 0.6, 0.95]}
+            <ScrollView 
+              contentContainerStyle={styles.Scrollview} 
+              style={styles.view} nestedScrollEnabled={true} 
+              horizontal
             >
-              <Text style={styles.tag}>Create New Playlist</Text>
-              <View style={styles.art}>
-                {firstFourImages.map((imageUrl, index) => (
-                  <View key={index} style={styles.column}>
-                    <Image
-                      source={{ uri: imageUrl }}
-                      style={styles.img}
-                    />
-                  </View>
-                ))}
-              </View>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <TextInput style={styles.name}
-                  editable
-                  onChangeText={onChangeText}
-                  value={text}
-                  placeholder="Name"
-                  placeholderTextColor="#B3B3B3" 
-                />
-                <View style={{marginTop: 16, marginLeft: 20}}>
-                  <Text style={{color: '#B3B3B3', marginBottom: -8}}>Private</Text>
-                    <Switch
-                      trackColor={{false: '#323632', true: '#63A47A'}}
-                      thumbColor={isEnabled ? '#1ED760' : '#B3B3B3'}
-                      onValueChange={toggleSwitch}
-                      value={isEnabled}
-                    />
+              <LinearGradient
+                colors={['#48A04C', '#2E452F', '#101010' ]}
+                style={styles.linearGradient}
+                locations={[0, 0.6, 0.95]}
+              >
+                <Text style={styles.tag}>Create New Playlist</Text>
+                <View style={styles.art}>
+                  {firstFourImages.map((imageUrl, index) => (
+                    <View key={index} style={styles.column}>
+                      <Image
+                        source={{ uri: imageUrl }}
+                        style={styles.img}
+                      />
+                    </View>
+                  ))}
                 </View>
-              </View>
-              
-            </LinearGradient>
-            <LinearGradient
-              colors={['#48A04C', '#2E452F', '#101010' ]}
-              style={styles.linearGradient}
-              locations={[0, 0.6, 0.95]}
-            >
-              <Text style={styles.tag}>Add To Existing Playlist</Text>
-              <View style={styles.scrollContainer}>
-                <View style={styles.albumContainer}>
-                  <Text style={styles.choosenAlbum}>Choosen Playlist</Text>
-                  <View style={styles.albumScrollImg}>
-                    <Image source={{uri: selectedPlaylist == null ? 'https://cdn.getmidnight.com/b5a0b552ae89a91aa34705031852bd16/2022/08/1_1---2022-08-24T165236.013-1.png' : selectedPlaylist.images[0].url}} 
-                    style={{width: 120, height: 120, borderRadius: 5}} />
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <TextInput style={styles.name}
+                    editable
+                    onChangeText={onChangeText}
+                    value={text}
+                    placeholder="Name"
+                    placeholderTextColor="#B3B3B3" 
+                  />
+                  <View style={{marginTop: 16, marginLeft: 20}}>
+                    <Text style={{color: '#B3B3B3', marginBottom: -8}}>Private</Text>
+                      <Switch
+                        trackColor={{false: '#323632', true: '#63A47A'}}
+                        thumbColor={isEnabled ? '#1ED760' : '#B3B3B3'}
+                        onValueChange={toggleSwitch}
+                        value={isEnabled}
+                      />
                   </View>
-                  <Text style={styles.choosenName}>{selectedPlaylist ? selectedPlaylist.name : "Choose a playlist"}</Text>
                 </View>
-                <FlatList
-                  data={filteredPlaylists}
-                  renderItem={({ item }) => <Item item={item} onPress={handlePress} />}
-                  keyExtractor={item => item.id}
-                  style={styles.flatlist}
-                />
-              </View>
-            </LinearGradient>
+              </LinearGradient>
+              <LinearGradient
+                colors={['#48A04C', '#2E452F', '#101010' ]}
+                style={styles.linearGradient}
+                locations={[0, 0.6, 0.95]}
+              >
+                <Text style={styles.tag}>Add To Existing Playlist</Text>
+                <View style={styles.scrollContainer}>
+                  <View style={styles.albumContainer}>
+                    <Text style={styles.choosenAlbum}>Choosen Playlist</Text>
+                    <View style={styles.albumScrollImg}>
+                      <Image source={{uri: selectedPlaylist == null ? 'https://cdn.getmidnight.com/b5a0b552ae89a91aa34705031852bd16/2022/08/1_1---2022-08-24T165236.013-1.png' : selectedPlaylist.images[0].url}} 
+                      style={{width: 120, height: 120, borderRadius: 5}} />
+                    </View>
+                    <Text style={styles.choosenName}>{selectedPlaylist ? selectedPlaylist.name : "Choose a playlist"}</Text>
+                  </View>
+                  <FlatList
+                    data={filteredPlaylists}
+                    renderItem={({ item }) => <Item item={item} onPress={handlePress} />}
+                    keyExtractor={item => item.id}
+                    style={styles.flatlist}
+                  />
+                </View>
+              </LinearGradient>
             </ScrollView>
+
           </Popover>
         </SafeAreaView>
       );
