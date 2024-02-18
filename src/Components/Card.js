@@ -67,7 +67,7 @@ async function handleSound() {
         await sound.setIsLoopingAsync(true)
       }
       catch(err) {
-        // console.log(err)
+        console.log(err)
       }
       setWaitingForAwait(false)
   }else {
@@ -83,7 +83,7 @@ async function handleSound() {
           setWaitingForAwait(false)
       }
     }catch(err) {
-      // console.log(err)
+      console.log(err)
     }
   }
   

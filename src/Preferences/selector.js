@@ -36,7 +36,6 @@ export default function Selector ({
         }
 
         fetchData()
-        console.log("fetching data")
     }, [endpoint, type])
 
 
@@ -44,7 +43,6 @@ export default function Selector ({
         if(data!=null) {
             const apiData = data[type.toLowerCase()]
         if (apiData) {
-            console.log("data2", apiData)
 
             const populateDisplay = () => {
                 if (type == 'Genres') {
@@ -66,7 +64,6 @@ export default function Selector ({
                     setToDisplay([obj, 'populated'])
                 }
             }
-            console.log("populating display")
             populateDisplay()
         }}
     }, [data, type])
@@ -80,7 +77,6 @@ export default function Selector ({
     const [input, onChangeInput] = React.useState('')
 
     const apiSearch = (type, search) => {
-        console.log('search', search)
         setEndpoint(`/search?q=${search}&type=${type.slice(0, -1)}&limit=50`)
     }
 

@@ -61,7 +61,6 @@ export default function App () {
             query = query.slice(0, -1)
         }
 
-        console.log('/recommendations?' + query)
         storeStringData('/recommendations?' + query)
         router.push('/recs?q=/recommendations%3F' + query)
     }
