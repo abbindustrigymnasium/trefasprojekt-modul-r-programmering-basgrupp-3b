@@ -201,12 +201,18 @@ export default function App () {
                     </View>
 
                     <View style={containerStyles.bottomDiv}>
-                        <View style={containerStyles.selectorContainer}>
+
+                        <ScrollView
+                            style={containerStyles.selectorContainer}
+                            contentContainerStyle={{
+                                width: Dimensions.get('screen').width + 100,
+                                height: '100%',
+                                justifyContent: 'center',
+                            }}
+                            horizontal={true}
+                            contentOffset={{ x: 50, y: 0 }}>
                             <Pressable
-                                style={[
-                                    selectorStyles.button,
-                                    { borderTopLeftRadius: 0, borderBottomLeftRadius: 0 },
-                                ]}
+                                style={selectorStyles.button}
                                 onPress={() => handlePage('Genres')}>
                                 <Text
                                     style={[
@@ -217,7 +223,7 @@ export default function App () {
                                 </Text>
                             </Pressable>
                             <Pressable
-                                style={selectorStyles.button}
+                                style={[selectorStyles.button, { marginHorizontal: 8 }]}
                                 onPress={() => handlePage('Artists')}>
                                 <Text
                                     style={[
@@ -228,10 +234,7 @@ export default function App () {
                                 </Text>
                             </Pressable>
                             <Pressable
-                                style={[
-                                    selectorStyles.button,
-                                    { borderTopRightRadius: 0, borderBottomRightRadius: 0 },
-                                ]}
+                                style={selectorStyles.button}
                                 onPress={() => handlePage('Tracks')}>
                                 <Text
                                     style={[
@@ -241,7 +244,7 @@ export default function App () {
                                     Tracks
                                 </Text>
                             </Pressable>
-                        </View>
+                        </ScrollView>
 
                         <View style={containerStyles.toRecs}>
                             <Pressable onPress={() => getRecommendations(selected)}>
@@ -289,9 +292,8 @@ const containerStyles = StyleSheet.create({
     },
     selectorContainer: {
         height: '40%',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        marginBottom: 24,
+        marginTop: 32,
     },
     toRecs: {
         height: '35%',
@@ -317,14 +319,14 @@ const selectorStyles = StyleSheet.create({
     button: {
         backgroundColor: '#1e1e1e',
         height: '100%',
-        width: '30%',
+        width: '32%',
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 8,
+        borderRadius: 10,
     },
     buttonText: {
         fontWeight: 'bold',
-        fontSize: 24,
+        fontSize: 18,
         textAlign: 'center',
     },
     playButton: {

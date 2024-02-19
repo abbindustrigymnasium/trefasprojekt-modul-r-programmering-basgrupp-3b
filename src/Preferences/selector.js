@@ -199,7 +199,7 @@ export default function Selector ({
                             <Pressable
                                 style={top.searchButton}
                                 onPress={() => apiSearch(type.toLowerCase(), apiInput)}>
-                                <Image
+                                <Image style={{ height: 28, width: 28 }}
                                     source={require('../../assets/icons/search_button.png')}
                                 />
                             </Pressable>
@@ -216,32 +216,34 @@ export default function Selector ({
                 )}
             </View>
 
-            {keyboardVisible || (
-                <View style={bottom.body}>
-                    <View>
-                        <Text style={bottom.title}>Selection:</Text>
-                    </View>
+            {
+                keyboardVisible || (
+                    <View style={bottom.body}>
+                        <View>
+                            <Text style={bottom.title}>Selection:</Text>
+                        </View>
 
-                    {getSelected()[type.toLowerCase()].length == 0 ? (
-                        <Text
-                            style={[
-                                styles.textContainer,
-                                { textAlign: 'left', marginLeft: 12 },
-                            ]}>
-                            None!
-                        </Text>
-                    ) : (
-                        renderSelected(getSelected(), type.toLowerCase())
-                    )}
+                        {getSelected()[type.toLowerCase()].length == 0 ? (
+                            <Text
+                                style={[
+                                    styles.textContainer,
+                                    { textAlign: 'left', marginLeft: 12 },
+                                ]}>
+                                None!
+                            </Text>
+                        ) : (
+                            renderSelected(getSelected(), type.toLowerCase())
+                        )}
 
-                    <View style={bottom.saveButton}>
-                        <Pressable onPress={() => handlePage()}>
-                            <Text style={[styles.textContainer, bottom.saveText]}>Save</Text>
-                        </Pressable>
+                        <View style={bottom.saveButton}>
+                            <Pressable onPress={() => handlePage()}>
+                                <Text style={[styles.textContainer, bottom.saveText]}>Save</Text>
+                            </Pressable>
+                        </View>
                     </View>
-                </View>
-            )}
-        </View>
+                )
+            }
+        </View >
     )
 }
 
@@ -287,15 +289,18 @@ const top = StyleSheet.create({
         alignItems: 'center',
         fontSize: 16,
         paddingLeft: 10,
+        paddingRight: 6,
         borderRadius: 4,
         backgroundColor: 'white'
     },
     searchButton: {
         marginHorizontal: 8,
-        height: 24,
-        width: 24,
+        height: 32,
+        width: 32,
         justifySelf: 'flex-end',
-        hitSlop: 16
+        hitSlop: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 })
 
