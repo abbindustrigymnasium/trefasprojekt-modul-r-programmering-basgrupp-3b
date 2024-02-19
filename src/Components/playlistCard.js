@@ -70,7 +70,9 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
                 style={styles.linearGradient}
                 locations={[0, 0.6, 0.95]}
               >
-                <Text style={styles.tag}>Create New Playlist</Text>
+                <View style={styles.tag}>
+                  <Text style={styles.text}>Create New Playlist</Text>
+                </View>
                 <View style={styles.art}>
                   {firstFourImages.map((imageUrl, index) => (
                     <View key={index} style={styles.column}>
@@ -89,9 +91,10 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
                     placeholder="Name"
                     placeholderTextColor="#B3B3B3" 
                   />
-                  <View style={{marginTop: 16, marginLeft: 20}}>
-                    <Text style={{color: '#B3B3B3', marginBottom: -8}}>Private</Text>
+                  <View style={{marginTop: 14, marginLeft: 20}}>
+                    <Text style={{color: '#B3B3B3', marginBottom: -10}}>Private</Text>
                       <Switch
+                        style={{marginTop: 5}}
                         trackColor={{false: '#323632', true: '#63A47A'}}
                         thumbColor={isEnabled ? '#1ED760' : '#B3B3B3'}
                         onValueChange={toggleSwitch}
@@ -105,15 +108,21 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
                 style={styles.linearGradient}
                 locations={[0, 0.6, 0.95]}
               >
-                <Text style={styles.tag}>Add To Existing Playlist</Text>
+                <View style={styles.tag}>
+                  <Text style={styles.text}>Add To Existing Playlist</Text>
+                </View>
                 <View style={styles.scrollContainer}>
                   <View style={styles.albumContainer}>
-                    <Text style={styles.choosenAlbum}>Choosen Playlist</Text>
+                    <View style={styles.choosenAlbum}>
+                      <Text style={styles.playlistName}>Choosen Playlist</Text>
+                    </View>
                     <View style={styles.albumScrollImg}>
                       <Image source={{uri: selectedPlaylist == null ? 'https://cdn.getmidnight.com/b5a0b552ae89a91aa34705031852bd16/2022/08/1_1---2022-08-24T165236.013-1.png' : selectedPlaylist.images[0].url}} 
                       style={{width: 120, height: 120, borderRadius: 5}} />
                     </View>
-                    <Text style={styles.choosenName}>{selectedPlaylist ? selectedPlaylist.name : "Choose a playlist"}</Text>
+                    <View style={styles.choosenName}>
+                      <Text style={styles.selectedName}>{selectedPlaylist ? selectedPlaylist.name : "Choose a playlist"}</Text>
+                    </View>
                   </View>
                   <FlatList
                     data={filteredPlaylists}
@@ -164,18 +173,21 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
       backgroundColor: 'transparent',
 
     },
+    text: {
+      textAlign: 'center',
+      textAlignVertical: 'center',
+      color: 'black',
+      fontWeight: 'bold',
+      fontSize: 20,
+    },
     
     tag: {
       backgroundColor: '#1ED760',
       height: 33,
       width: 309,
       borderRadius: 20,
-      textAlign: 'center',
-      textAlignVertical: 'center',
-      color: 'black',
-      fontWeight: 'bold',
-      fontSize: 20,
-      marginTop: 2
+      marginTop: 2,
+      justifyContent: 'center',
     },
     art: {
       backgroundColor: 'white',
@@ -190,7 +202,7 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
     },
     img: {
       width: '100%',
-      height: 105, // Adjust the height of the images as needed
+      height: 105,
       contentFit: 'cover',
     },
     name: {
@@ -241,10 +253,13 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
       backgroundColor: '#1ED760',
       height: 30,
       width: 135,
-      textAlign: 'center',
-      textAlignVertical: 'center',
       marginBottom: 20,
       borderRadius: 5,
+      justifyContent: 'center',
+    },
+    playlistName: {
+      textAlign: 'center',
+      textAlignVertical: 'center',
       color: 'black',
       fontWeight: 'bold',
       fontSize: 15,
@@ -253,12 +268,15 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
       backgroundColor: '#323632',
       height: 30,
       width: 120,
+      borderRadius: 5,
+      marginTop: 20,
+      justifyContent: 'center'
+    }, 
+    selectedName: {
       textAlign: 'center',
       textAlignVertical: 'center',
       color: '#B3B3B3',
-      borderRadius: 5,
-      marginTop: 20,
-    }, 
+    },
     dataList: {
       padding: 20
     }

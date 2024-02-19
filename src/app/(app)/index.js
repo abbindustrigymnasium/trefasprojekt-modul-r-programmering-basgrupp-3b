@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, Pressable, Image } from 'react-native'
 import { router } from 'expo-router'
 import Selector from '../../Preferences/selector'
 import { useStorageState } from '../../Storage/asyncStorageFunctions'
-
+import { useSession } from '../../Context/authContext'
 var selected = {
     genres: [],
     artists: [],
@@ -27,6 +27,7 @@ var selected = {
 
 export default function App () {
     const [dummyState, setDummyState] = useState(false)
+    const {signOut} = useSession()
     const forceRender = () => {
         setDummyState(!dummyState)
     }
