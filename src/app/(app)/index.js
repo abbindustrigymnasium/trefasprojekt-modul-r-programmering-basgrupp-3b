@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Text, View, StyleSheet, Pressable, Image } from 'react-native'
+import { Text, View, StyleSheet, Pressable, Image, ScrollView, Dimensions } from 'react-native'
 import { router } from 'expo-router'
 import Selector from '../../Preferences/selector'
 import { useStorageState } from '../../Storage/asyncStorageFunctions'
@@ -207,6 +207,8 @@ export default function App () {
                                 width: Dimensions.get('screen').width + 100,
                                 height: '100%',
                                 justifyContent: 'center',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
                             }}
                             horizontal={true}
                             contentOffset={{ x: 50, y: 0 }}>
@@ -250,7 +252,7 @@ export default function App () {
                                 <View style={selectorStyles.playButton}>
                                     <Image
                                         style={{ height: '85%', width: '85%' }}
-                                        source={require('../../../assets/icons/play_button.svg')}
+                                        source={require('../../../assets/icons/playbutton.png')}
                                     />
                                 </View>
                             </Pressable>
@@ -292,8 +294,7 @@ const containerStyles = StyleSheet.create({
     selectorContainer: {
         height: '40%',
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        
     },
     toRecs: {
         height: '35%',
