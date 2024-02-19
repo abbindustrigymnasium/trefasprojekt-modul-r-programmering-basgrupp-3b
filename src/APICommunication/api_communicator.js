@@ -11,11 +11,12 @@ const url = 'https://api.spotify.com/v1';
 const spotifyRequest = async ({endpoint, method="GET", auth_token, costum_headers={}, data} ) => {
 
   costum_headers['Authorization'] = `Bearer ${auth_token}`
-    try {
+  data && !costum_headers['Content-Type'] ? costum_headers['Content-Type'] = 'application/json' : null
+  try {
       const response = await fetch(url + endpoint, {
         method: method,
         headers: costum_headers,
-        body: data ? JSON.stringify(data) : null
+        body: data && costum_headers['Content-Type'] === 'application/json' ? JSON.stringify(data) : data
 
       });
   
@@ -23,8 +24,8 @@ const spotifyRequest = async ({endpoint, method="GET", auth_token, costum_header
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
   
-      const data = await response.json();
-      return data;
+      const responseData = response.headers.get('content-type') && response.headers.get('content-type')?.indexOf("application/json")!==-1 ?  await response.json(): await response.text()
+      return responseData;
     } catch (error) {
       console.error('Error fetching data from Spotify:', error);
       return null
@@ -38,7 +39,10 @@ export const useSpotifyRequest = ({endpoint, method, costum_headers,  body, fetc
   const {session, refreshSession} = useSession();
   
 
-  const fetchFromSpotify = async (URL) => {
+  const fetchFromSpotify = async ({
+    URL,
+    fetchData
+    }) => {
     if (session === null) {
       console.log('No session token found');
       return;
@@ -51,10 +55,11 @@ export const useSpotifyRequest = ({endpoint, method, costum_headers,  body, fetc
             method: method,
             auth_token: newSession.accessToken,
             costum_headers: costum_headers,
-            data: body
+            data: fetchData ? fetchData : body
           }
           );
         setData(result);
+        return result
       }else {
         const result = await spotifyRequest(
           {
@@ -62,10 +67,11 @@ export const useSpotifyRequest = ({endpoint, method, costum_headers,  body, fetc
             method: method,
             auth_token: session.accessToken,
             costum_headers: costum_headers,
-            data: body
+            data: fetchData ? fetchData :  body
           }
           );
         setData(result);
+        return result
       }
     
     

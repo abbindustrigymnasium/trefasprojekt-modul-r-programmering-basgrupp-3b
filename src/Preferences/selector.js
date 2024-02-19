@@ -32,7 +32,7 @@ export default function Selector ({
 
     useEffect(() => {
         const fetchData = async () => {
-            await fetchfromSpotify(endpoint)
+            await fetchfromSpotify({URL: endpoint})
         }
 
         fetchData()

@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, Pressable, Image, ScrollView, Dimensions } from
 import { router } from 'expo-router'
 import Selector from '../../Preferences/selector'
 import { useStorageState } from '../../Storage/asyncStorageFunctions'
+import { useSession } from '../../Context/authContext'
 
 var selected = {
     genres: [],
@@ -27,6 +28,7 @@ var selected = {
 
 export default function App () {
     const [dummyState, setDummyState] = useState(false)
+    const {signOut} = useSession()
     const forceRender = () => {
         setDummyState(!dummyState)
     }
@@ -234,6 +236,11 @@ export default function App () {
                                     Artists
                                 </Text>
                             </Pressable>
+                            <Pressable style={selectorStyles.button} onPress={() => signOut()}>
+                                <Text>
+                                    Sign out
+                                </Text>
+                            </Pressable>
                             <Pressable
                                 style={selectorStyles.button}
                                 onPress={() => handlePage('Tracks')}>
@@ -256,6 +263,7 @@ export default function App () {
                                     />
                                 </View>
                             </Pressable>
+                            
                         </View>
                     </View>
                 </View>

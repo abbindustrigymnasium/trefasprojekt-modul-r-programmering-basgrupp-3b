@@ -1,10 +1,11 @@
 
-import { StyleSheet, Text, TouchableOpacity, SafeAreaView, View, ScrollView, TextInput, FlatList, Pressable, Switch } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, SafeAreaView, View, ScrollView, TextInput, FlatList, Pressable, Switch, Alert } from 'react-native';
 import React, { useState } from 'react';
 import Popover from 'react-native-popover-view';
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from 'expo-image';
 import { useSpotifyRequest } from '../APICommunication/api_communicator';
+import { fileToBase64 } from '../FileSystem/toBase64';
 
 
 
@@ -12,8 +13,8 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
   
   const [text, onChangeText] = React.useState('');
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const toggleSwitch = () => setIsPrivate(previousState => !previousState);
 
  
   const [playlists, fetchPlaylists] = useSpotifyRequest({
@@ -22,11 +23,46 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
     fetchDirectly: true,
   })
 
-  const [userProfile, fetchFromSpotify] = useSpotifyRequest({
+  const [userProfile, fetchMeFromSpotify] = useSpotifyRequest({
     endpoint: '/me',
     method: 'GET',
     fetchDirectly: true,
   });
+
+  const [createPlaylist, fetchCreatePlaylist] = useSpotifyRequest({
+    endpoint: '',
+    method: 'POST',
+    fetchDirectly: false,
+    body: {
+      name: text,
+      public: !isPrivate,
+      description: 'New playlist created by GrooveGuru'
+    }
+  });
+
+  const [playlistImage, fetchAddPlaylistImage] = useSpotifyRequest({
+    endpoint: '',
+    method: 'PUT',
+    fetchDirectly: false,
+    costum_headers: {
+      'Content-Type': 'image/jpeg'
+    },
+  });
+
+
+  const [addToPlaylist, fetchAddToPlaylist] = useSpotifyRequest({
+    endpoint: '',
+    method: 'POST',
+    fetchDirectly: false,
+    body: {
+      uris: likedSongs.tracks.map(track => track.uri)
+    }
+  });
+
+
+
+
+
   const firstFourImages = [];
     likedSongs.tracks.forEach(track => {
       if (track.album && track.album.images) {
@@ -56,6 +92,22 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
   };
   
 
+  React.useEffect(() => {
+    if(addToPlaylist && addToPlaylist.snapshot_id) {
+      Alert.alert(
+        "Songs added to playlist",
+        "The songs have been added to the playlist",
+        [
+          {
+            text: "OK",
+            style: "cancel"
+          }
+        ]
+      )
+    }
+  }
+  , [addToPlaylist])
+
 
       return (
         <SafeAreaView>
@@ -70,7 +122,41 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
                 style={styles.linearGradient}
                 locations={[0, 0.6, 0.95]}
               >
-                <Text style={styles.tag}>Create New Playlist</Text>
+                <Pressable onPress={async () => {
+                  if(text === '') {
+                    Alert.alert(
+                      "Please enter a name for the playlist",
+                      "You need to enter a name for the playlist to be created",
+                      [
+                        {
+                          text: "OK",
+                          style: "cancel"
+                        }
+                      ]
+                    )
+                    return
+                  }
+
+
+                 const newPlaylist = await fetchCreatePlaylist(
+                  {
+                  URL: `/users/${userProfile.id}/playlists`, 
+                  }
+                  )
+                  await fetchAddToPlaylist(
+                    {
+                    URL: `/playlists/${newPlaylist.id}/tracks`, 
+                    }
+                    )
+                    await fetchAddPlaylistImage(
+                      {
+                      URL: `/playlists/${newPlaylist.id}/images`,
+                      fetchData: await fileToBase64(likedSongs?.tracks[0]?.album?.images[0]?.url) 
+                      }
+                      )
+                  }}>
+                    <Text style={styles.tag}>Create New Playlist</Text>
+                </Pressable>
                 <View style={styles.art}>
                   {firstFourImages.map((imageUrl, index) => (
                     <View key={index} style={styles.column}>
@@ -93,9 +179,9 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
                     <Text style={{color: '#B3B3B3', marginBottom: -8}}>Private</Text>
                       <Switch
                         trackColor={{false: '#323632', true: '#63A47A'}}
-                        thumbColor={isEnabled ? '#1ED760' : '#B3B3B3'}
+                        thumbColor={isPrivate ? '#1ED760' : '#B3B3B3'}
                         onValueChange={toggleSwitch}
-                        value={isEnabled}
+                        value={isPrivate}
                       />
                   </View>
                 </View>
@@ -105,7 +191,25 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
                 style={styles.linearGradient}
                 locations={[0, 0.6, 0.95]}
               >
+                <Pressable onPress={() => {
+                  selectedPlaylist ? fetchAddToPlaylist(
+                    {
+                    URL: `/playlists/${selectedPlaylist.id}/tracks`, 
+                    }
+                    ) : Alert.alert(
+                      "Please select a playlist",
+                      "You need to select a playlist to add the songs to",
+                      [
+                        {
+                          text: "OK",
+                          style: "cancel"
+                        }
+                      ]
+                    )
+                  
+                }}>
                 <Text style={styles.tag}>Add To Existing Playlist</Text>
+                </Pressable>
                 <View style={styles.scrollContainer}>
                   <View style={styles.albumContainer}>
                     <Text style={styles.choosenAlbum}>Choosen Playlist</Text>
