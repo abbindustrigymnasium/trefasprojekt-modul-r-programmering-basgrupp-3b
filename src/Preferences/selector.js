@@ -27,7 +27,7 @@ export default function Selector ({
     const [endpoint, setEndpoint] = useState(
         type == 'Genres'
             ? '/recommendations/available-genre-seeds'
-            : '/search?q=ole&type=artist,track&limit=50'
+            : `/me/top/${type.toLowerCase}&limit=50`
     )
 
     useEffect(() => {
@@ -40,32 +40,33 @@ export default function Selector ({
 
 
     useEffect(() => {
-        if(data!=null) {
+        if (data != null) {
             const apiData = data[type.toLowerCase()]
-        if (apiData) {
+            if (apiData) {
 
-            const populateDisplay = () => {
-                if (type == 'Genres') {
-                    setToDisplay(apiData)
-                } else if (type == 'Artists') {
-                    var obj = {}
-                    for (i in apiData.items) {
-                        obj[apiData.items[i].id] = apiData.items[i].name
+                const populateDisplay = () => {
+                    if (type == 'Genres') {
+                        setToDisplay(apiData)
+                    } else if (type == 'Artists') {
+                        var obj = {}
+                        for (i in apiData.items) {
+                            obj[apiData.items[i].id] = apiData.items[i].name
+                        }
+                        setToDisplay([obj, 'populated'])
+                    } else if (type == 'Tracks') {
+                        obj = {}
+                        for (i in apiData.items) {
+                            obj[apiData.items[i].id] = `${apiData.items[i].name
+                                } - ${apiData.items[i].artists
+                                    .map((item, _i) => item.name)
+                                    .join(', ')}`
+                        }
+                        setToDisplay([obj, 'populated'])
                     }
-                    setToDisplay([obj, 'populated'])
-                } else if (type == 'Tracks') {
-                    obj = {}
-                    for (i in apiData.items) {
-                        obj[apiData.items[i].id] = `${apiData.items[i].name
-                            } - ${apiData.items[i].artists
-                                .map((item, _i) => item.name)
-                                .join(', ')}`
-                    }
-                    setToDisplay([obj, 'populated'])
                 }
+                populateDisplay()
             }
-            populateDisplay()
-        }}
+        }
     }, [data, type])
 
     const [dummyState, setDummyState] = useState(false)
