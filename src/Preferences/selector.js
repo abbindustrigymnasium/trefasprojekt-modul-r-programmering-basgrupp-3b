@@ -201,6 +201,7 @@ export default function Selector ({
                                 placeholder={`¿What's today's groove?`}
                                 onChangeText={onChangeApiInput}
                                 style={{ width: '85%', height: '90%', fontSize: 18 }}
+                                onSubmitEditing={() => apiSearch(type.toLowerCase(), apiInput)}
                             />
                             <Pressable
                                 style={top.searchButton}
