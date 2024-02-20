@@ -7,7 +7,7 @@ import {
     TextInput,
     StyleSheet,
     Keyboard,
-    
+
 } from 'react-native'
 import { Image } from 'expo-image'
 import { useSpotifyRequest } from '../APICommunication/api_communicator'
@@ -24,6 +24,7 @@ export default function Selector ({
             fetchDirectly: false
         }
     )
+    // toDisplay = array filtered from api response, contents dependent on type
     const [toDisplay, setToDisplay] = useState([])
     const [endpoint, setEndpoint] = useState(
         type == 'Genres'
@@ -34,18 +35,21 @@ export default function Selector ({
     const [closeSmall, setSmallClose] = useState(require('../../assets/icons/close_small.png'))
     const [addSmall, setAddSmall] = useState(require('../../assets/icons/add_small.png'))
     console.log(closeSmall)
+    // Called if endpoint changes, executes a spotify request
     useEffect(() => {
         const fetchData = async () => {
-            await fetchfromSpotify({URL: endpoint})
+            await fetchfromSpotify({ URL: endpoint })
         }
 
-        if(type == 'Genres' || apiInput.trim() != '') {
+        if (type == 'Genres' || apiInput.trim() != '') {
             fetchData()
         }
 
     }, [endpoint, type])
 
 
+    // Called if data (from useSpotifyRequest) changes (on user search in 'Artists'/'Tracks' Selector)
+    // Populates toDisplay
     useEffect(() => {
         if (data != null) {
             const apiData = data[type.toLowerCase()]
@@ -88,6 +92,7 @@ export default function Selector ({
         setEndpoint(`/search?q=${search}&type=${type.slice(0, -1)}&limit=50`)
     }
 
+    // To hide a specific View when searching
     const [keyboardVisible, setKeyboardVisible] = useState(false)
 
     useEffect(() => {
@@ -111,10 +116,14 @@ export default function Selector ({
         }
     }, [])
 
+    // Filters genres based on contents of user's search (input)
     function executeSearch (arr) {
         return arr.filter((e) => e.startsWith(input.toLowerCase()))
     }
 
+    // Adds or removes item from selected
+    // forceRender is ultimately redundant, as selected could've simply been added to state management
+    // but such was not my will 
     function selectItem (type, method, item) {
         if (getSelected().length() < 5 || method == 'rm') {
             changeSelected(type, method, item)
@@ -124,6 +133,7 @@ export default function Selector ({
         forceRender()
     }
 
+    // Returns jsx for an array (toDisplay)
     function renderArray (type, data) {
         var arr = []
         if (type == 'genres') {
@@ -146,7 +156,7 @@ export default function Selector ({
                 showsVerticalScrollIndicator={false}>
                 {arr.map((item, index) => (
                     <View key={index} style={list.item}>
-                        <Text style={[styles.textContainer, list.text, getSelected().includesElement(type,item)? {color: 'white'} : null]}>
+                        <Text style={[styles.textContainer, list.text, getSelected().includesElement(type, item) ? { color: 'white' } : null]}>
                             {(type == 'genres' ? item : item[0])
                                 .toLowerCase()
                                 .replace(/\b\w/g, (word_head) => word_head.toUpperCase())}
@@ -159,16 +169,16 @@ export default function Selector ({
                             }
                             style={{ hitSlop: 4 }}>
                             {getSelected().includesElement(type, item) ? (
-                                 <Image 
-                                 source={closeSmall}
-                                 height={24}
+                                <Image
+                                    source={closeSmall}
+                                    height={24}
                                     width={24}
-                                 />
+                                />
                             ) : (
-                                <Image 
-                                source={addSmall}
-                                height={24}
-                                   width={24}
+                                <Image
+                                    source={addSmall}
+                                    height={24}
+                                    width={24}
                                 />
                             )}
                         </Pressable>
@@ -178,6 +188,7 @@ export default function Selector ({
         )
     }
 
+    // Returns jsx for selected
     function renderSelected (arr, type) {
         return (
             <ScrollView
@@ -191,10 +202,10 @@ export default function Selector ({
                                 .replace(/\b\w/g, (word_head) => word_head.toUpperCase())}
                         </Text>
                         <Pressable onPress={() => selectItem(type, 'rm', item)} style={{ hitSlop: 4 }}>
-                            <Image 
-                            source={closeSmall}
-                            height={24}
-                            width={24}
+                            <Image
+                                source={closeSmall}
+                                height={24}
+                                width={24}
                             />
                         </Pressable>
                     </View>
@@ -208,6 +219,7 @@ export default function Selector ({
             <View style={top.body}>
                 <Text style={[styles.textContainer, styles.title]}>Search {type}</Text>
                 <View style={top.searchContainer}>
+                    {/* Since 'Genres' and the others have different goals with the search */}
                     {type == 'Genres' ? (
                         <TextInput
                             placeholder={`¿What's today's groove?`}
@@ -222,14 +234,13 @@ export default function Selector ({
                                 style={{ width: '85%', height: '90%', fontSize: 18 }}
                                 onSubmitEditing={() => apiSearch(type.toLowerCase(), apiInput)}
                             />
-                        
+
                         </View>
                     )}
                 </View>
 
-                {toDisplay.length > 0 || toDisplay[1] == 'populated' ? (
-                    renderArray(type.toLowerCase(), toDisplay)
-                ) : null}
+                {(toDisplay.length > 0 || toDisplay[1] == 'populated') && (
+                    renderArray(type.toLowerCase(), toDisplay))}
             </View>
 
             {keyboardVisible || (
@@ -261,6 +272,7 @@ export default function Selector ({
     )
 }
 
+// style definitions
 const styles = StyleSheet.create({
     body: {
         height: '100%',

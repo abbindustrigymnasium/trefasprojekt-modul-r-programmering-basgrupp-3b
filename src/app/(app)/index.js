@@ -7,9 +7,13 @@ import { useStorageState } from '../../Storage/asyncStorageFunctions'
 import { useSession } from '../../Context/authContext'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+// object to construct search query for spotify from
 var selected = {
+    // array of strings
     genres: [],
+    // array of [artists.items[i].name (string), artists.items[i].id (string)]
     artists: [],
+    // array of [tracks.items[i].name + '-' + tracks.items[i].artists (string), tracks.items[i].id (string)]
     tracks: [],
     length: function () {
         return this.genres.length + this.artists.length + this.tracks.length
@@ -29,14 +33,17 @@ var selected = {
 }
 
 export default function App () {
+    // to re-render page when deemed necessary (when updating selected in index.js)
     const [dummyState, setDummyState] = useState(false)
-    const {signOut, user} = useSession()
+    const { signOut, user } = useSession()
     const forceRender = () => {
         setDummyState(!dummyState)
     }
+
     const [recs_endpoint, storeStringData] = useStorageState('recs_endpoint')
     const insets = useSafeAreaInsets()
 
+    // End of file, construct and store query string and navigate to recommendations.js
     function getRecommendations (selected) {
         if (selected.length() == 0) {
             alert("Please select at least one seed Genre/Track/Artist")
@@ -70,8 +77,9 @@ export default function App () {
         router.push('/recs?q=/recommendations%3F' + query)
     }
 
+    // For handling navigation between selector.js and index.js
+    // (Which isn't actually navigation, just showing or hiding certain tags in App()'s return)
     const [currentPage, setPage] = useState()
-    // null
 
     const handlePage = (component) => {
         setPage(currentPage === component ? null : component)
@@ -81,9 +89,13 @@ export default function App () {
         if (currentPage != null) {
             return (
                 <Selector
+                    // 'Genres', 'Artists' or 'Tracks'
                     type={currentPage}
+                    // Function to set currentpage back to null, 'navigating' back to index.js
                     handlePage={() => handlePage(currentPage)}
+                    // Returns selected
                     getSelected={getSelected}
+                    // Enables manipulation of selected from selector.js
                     changeSelected={changeSelected}
                 />
             )
@@ -104,11 +116,13 @@ export default function App () {
                 (i) => !(i[0] === item[0] && i[1] === item[1])
             )
         }
+        // If changeSelected is called while Selector isn't shown...
         if (currentPage == null) {
             forceRender()
         }
     }
 
+    // Returns jsx for the selected object
     function renderSelected (selected, type) {
         return (
             <View style={containerStyles.selection}>
@@ -122,9 +136,9 @@ export default function App () {
                                 .replace(/\b\w/g, (word_head) => word_head.toUpperCase())}
                         </Text>
                         <Pressable onPress={() => changeSelected(type, 'rm', item)} style={{ hitSlop: 4 }}>
-                            <Image 
-                            source={require('../../../assets/icons/close_small.svg')}
-                            className=" h-6 w-6"
+                            <Image
+                                source={require('../../../assets/icons/close_small.svg')}
+                                className=" h-6 w-6"
                             />
                         </Pressable>
                     </View>
@@ -134,12 +148,13 @@ export default function App () {
     }
 
     return (
-        <View style={[styles.body, {paddingBottom: insets.bottom}]}>
+        <View style={[styles.body, { paddingBottom: insets.bottom }]}>
+            {/* if currentPage is null, show this */}
             {!currentPage && (
                 <View>
                     <View style={containerStyles.topDiv} className="px-4">
-                    <Text className="text-2xl font-semibold text-groove-grey">
-                           Hi {user ? user.display_name : "Anonymous"}!
+                        <Text className="text-2xl font-semibold text-groove-grey">
+                            Hi {user ? user.display_name : "Anonymous"}!
                         </Text>
                         <Text className=" text-4xl py-2 font-semibold text-walter-white">
                             ¡Choose your Groove!
@@ -152,7 +167,7 @@ export default function App () {
                                         (containerStyles.textContainer,
                                             selectionStyles.selectionText)
                                     }
-                                    >
+                                >
                                     Genres
                                 </Text>
                                 {selected.genres.length == 0 ? (
@@ -160,7 +175,7 @@ export default function App () {
                                         style={[
                                             containerStyles.textContainer,
                                             { alignSelf: 'flex-start' },
-                                            {fontSize: 16},
+                                            { fontSize: 16 },
                                         ]}
                                         className="font-semibold">
                                         No genres selected
@@ -183,10 +198,10 @@ export default function App () {
                                         style={[
                                             containerStyles.textContainer,
                                             { alignSelf: 'flex-start' },
-                                            {fontSize: 16},
+                                            { fontSize: 16 },
                                         ]}
                                         className="font-semibold"
-                                        >
+                                    >
                                         No artists selected
                                     </Text>
                                 ) : (
@@ -207,10 +222,10 @@ export default function App () {
                                         style={[
                                             containerStyles.textContainer,
                                             { alignSelf: 'flex-start' },
-                                            {fontSize: 16},
+                                            { fontSize: 16 },
                                         ]}
                                         className="font-semibold"
-                                        >
+                                    >
                                         No tracks selected!
                                     </Text>
                                 ) : (
@@ -233,7 +248,7 @@ export default function App () {
                             horizontal={true}
                             showsHorizontalScrollIndicator={false}
                             showsVerticalScrollIndicator={false}
-                    
+
                             contentOffset={{ x: 50, y: 0 }}>
                             <Pressable
                                 style={selectorStyles.button}
@@ -279,16 +294,18 @@ export default function App () {
                                     />
                                 </View>
                             </Pressable>
-                            
+
                         </View>
                     </View>
                 </View>
             )}
+            {/* if currentPage has a real value, openPage() */}
             {currentPage && openPage()}
         </View>
     )
 }
 
+// style definitions
 const styles = StyleSheet.create({
     body: {
         backgroundColor: '#101010',
@@ -318,7 +335,7 @@ const containerStyles = StyleSheet.create({
     selectorContainer: {
         height: '40%',
         flexDirection: 'row',
-        
+
     },
     toRecs: {
         height: '35%',
