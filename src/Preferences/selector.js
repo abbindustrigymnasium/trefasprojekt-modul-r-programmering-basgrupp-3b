@@ -7,8 +7,9 @@ import {
     TextInput,
     StyleSheet,
     Keyboard,
-    Image,
+
 } from 'react-native'
+import { Image } from 'expo-image'
 import { useSpotifyRequest } from '../APICommunication/api_communicator'
 
 export default function Selector ({
@@ -31,13 +32,19 @@ export default function Selector ({
             : `/me/top/${type.toLowerCase}&limit=50`
     )
 
+    const [closeSmall, setSmallClose] = useState(require('../../assets/icons/close_small.png'))
+    const [addSmall, setAddSmall] = useState(require('../../assets/icons/add_small.png'))
+    console.log(closeSmall)
     // Called if endpoint changes, executes a spotify request
     useEffect(() => {
         const fetchData = async () => {
-            await fetchfromSpotify(endpoint)
+            await fetchfromSpotify({ URL: endpoint })
         }
 
-        fetchData()
+        if (type == 'Genres' || apiInput.trim() != '') {
+            fetchData()
+        }
+
     }, [endpoint, type])
 
 
@@ -149,7 +156,7 @@ export default function Selector ({
                 showsVerticalScrollIndicator={false}>
                 {arr.map((item, index) => (
                     <View key={index} style={list.item}>
-                        <Text style={[styles.textContainer, list.text]}>
+                        <Text style={[styles.textContainer, list.text, getSelected().includesElement(type, item) ? { color: 'white' } : null]}>
                             {(type == 'genres' ? item : item[0])
                                 .toLowerCase()
                                 .replace(/\b\w/g, (word_head) => word_head.toUpperCase())}
@@ -162,9 +169,17 @@ export default function Selector ({
                             }
                             style={{ hitSlop: 4 }}>
                             {getSelected().includesElement(type, item) ? (
-                                <Text style={list.button}> &#10006; </Text>
+                                <Image
+                                    source={closeSmall}
+                                    height={24}
+                                    width={24}
+                                />
                             ) : (
-                                <Text style={[list.button, { color: '#176d36' }]}> &#10010; </Text>
+                                <Image
+                                    source={addSmall}
+                                    height={24}
+                                    width={24}
+                                />
                             )}
                         </Pressable>
                     </View>
@@ -187,7 +202,11 @@ export default function Selector ({
                                 .replace(/\b\w/g, (word_head) => word_head.toUpperCase())}
                         </Text>
                         <Pressable onPress={() => selectItem(type, 'rm', item)} style={{ hitSlop: 4 }}>
-                            <Text style={selected.removeButton}> &#10006; </Text>
+                            <Image
+                                source={closeSmall}
+                                height={24}
+                                width={24}
+                            />
                         </Pressable>
                     </View>
                 ))}
@@ -215,17 +234,13 @@ export default function Selector ({
                                 style={{ width: '85%', height: '90%', fontSize: 18 }}
                                 onSubmitEditing={() => apiSearch(type.toLowerCase(), apiInput)}
                             />
+
                         </View>
                     )}
                 </View>
 
-                {toDisplay.length > 0 || toDisplay[1] == 'populated' ? (
-                    renderArray(type.toLowerCase(), toDisplay)
-                ) : (
-                    <Text style={{ textAlign: 'center', fontSize: 24, color: 'white' }}>
-                        Loading {type}...
-                    </Text>
-                )}
+                {(toDisplay.length > 0 || toDisplay[1] == 'populated') && (
+                    renderArray(type.toLowerCase(), toDisplay))}
             </View>
 
             {keyboardVisible || (
@@ -287,7 +302,7 @@ const top = StyleSheet.create({
     searchContainer: {
         flex: 0,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'start',
         flexDirection: 'row',
         padding: 12,
     },
@@ -351,14 +366,17 @@ const list = StyleSheet.create({
         backgroundColor: '#1e1e1e',
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: 4,
-        marginRight: 8,
+        justifyContent: 'center',
+        marginVertical: 5,
+        marginRight: 10,
         padding: 3,
-        paddingHorizontal: 6,
-        borderRadius: 8,
+        gap: 10,
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        borderRadius: 10,
     },
     text: {
-        color: '#B4b3b3',
+        color: '#B3B3B3',
         maxWidth: "95%",
         fontWeight: 700,
         fontSize: 16,
@@ -379,11 +397,14 @@ const selected = StyleSheet.create({
         backgroundColor: '#1e1e1e',
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: 4,
-        marginRight: 8,
+        justifyContent: 'center',
+        marginVertical: 5,
+        marginRight: 10,
         padding: 3,
-        paddingHorizontal: 6,
-        borderRadius: 8,
+        gap: 10,
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        borderRadius: 10,
     },
     text: {
         color: '#B4b3b3',

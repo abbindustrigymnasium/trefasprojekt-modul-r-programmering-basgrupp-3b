@@ -17,7 +17,7 @@ import { Link } from "expo-router";
 import {useWindowDimensions} from 'react-native';
 import {Audio} from 'expo-av'
 
-import Animated, { SlideInUp,useAnimatedStyle, useSharedValue, withSpring, withDecay, runOnJS, withRepeat, withTiming, Easing, withSequence, withDelay, FlipInEasyY, PinwheelIn, BounceIn, FadeInUp, StretchInX, ZoomIn, RollInLeft, LightSpeedInLeft, FadeIn, FlipInEasyX, interpolate} from 'react-native-reanimated';
+import Animated, { SlideInUp,useAnimatedStyle, useSharedValue, withSpring, withDecay, runOnJS, withRepeat, withTiming, Easing, withSequence, withDelay, FlipInEasyY, PinwheelIn, BounceIn, FadeInUp, StretchInX, ZoomIn, RollInLeft, LightSpeedInLeft, FadeIn, FlipInEasyX, interpolate, SlideInLeft, SlideInDown} from 'react-native-reanimated';
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 
 import TextTicker from "./TextTicker/";
@@ -266,7 +266,7 @@ let drag = Gesture.Pan()
   return (
     
     <GestureDetector gesture={drag}>
-    <Animated.View onLayout={onLayout} className={`border-4 w-5/6 max-w-[340px] border-transparent`} style={[{ borderColor: borderColor, backgroundColor: borderColor} , containerStyle]}>
+    <Animated.View entering={SlideInLeft.duration(200)} onLayout={onLayout} className={`border-4 w-5/6 max-w-[340px] border-transparent`} style={[{ borderColor: borderColor, backgroundColor: borderColor} , containerStyle]}>
      <Animated.View className="flex flex-col justify-center w-full bg-less-black px-5 py-5" style={{opacity: cardOpacity}}>
       <View className="flex flex-col justify-center w-full"    style={{gap: 20}}>
       <Image
