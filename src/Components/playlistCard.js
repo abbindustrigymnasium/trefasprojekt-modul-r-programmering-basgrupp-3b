@@ -13,9 +13,6 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
   
   const [text, onChangeText] = React.useState('');
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
-  const [isPrivate, setIsPrivate] = useState(false);
-  const toggleSwitch = () => setIsPrivate(previousState => !previousState);
-
  
   const [playlists, fetchPlaylists] = useSpotifyRequest({
     endpoint: '/me/playlists',
