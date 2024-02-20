@@ -138,7 +138,7 @@ export default function Page () {
                     (
                     
                     <Animated.View entering={FadeIn.duration(200)} className="flex justify-center items-center flex-col">
-                    <Text className="text-xl font-bold text-walter-white text-center">Fetching new recommendations{"*"*3}</Text>
+                    <Text className="text-xl font-bold text-walter-white text-center">Fetching new recommendations...</Text>
                     </Animated.View>): null
                  }
                  
