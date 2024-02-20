@@ -9,15 +9,16 @@ import { router } from 'expo-router';
 import spotifyLogo from '../../assets/spotify-logos/Spotify_Logo_RGB_Black.png'
 
 import {useSession} from '../Context/authContext'
+import { useSpotifyRequest } from '../APICommunication/api_communicator';
  
 
 
 export default function LoginButton() {
     const [dimensions, setDimensions] = React.useState({height: 200, width: 200})
     const [shouldRedirect, setShouldRedirect] = React.useState(false)
-   const {signIn, request, session} = useSession()
+    const [user, fetchUser] = useSpotifyRequest({endpoint: '/me', method: 'GET', fetchDirectly: false})
+   const {signIn, request, session, setUser} = useSession()
 
-   
 
   
   
@@ -28,9 +29,16 @@ export default function LoginButton() {
   }
 
   React.useEffect(() => {
+    async function getUserAndRedirect() {
     if(shouldRedirect && session) {
+      const user = await fetchUser({URL: '/me', fetchData: null}) 
+      if(user) {
+          setUser(user)
+      }
       router.replace("/")
     }
+  }
+  getUserAndRedirect()
   }
   ,[shouldRedirect, session])
 

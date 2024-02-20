@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useStorageState } from '../Storage/asyncStorageFunctions';
 import { useLogin, refreshToken } from '../LoginLogic/loginLogic';
 import {TokenResponse} from 'expo-auth-session'
@@ -9,6 +9,8 @@ const AuthContext = React.createContext({
   session: null,
   refreshSession: async () => null,
   isLoading: false,
+  user: null,
+  setUser: () => null,
   request: null, 
 });
 
@@ -26,7 +28,16 @@ export function useSession() {
 
 export function SessionProvider(props) {
   const [[isLoading, session], setSession] = useStorageState('session');
-  const {request, promptAsync} = useLogin({signInAction: setSession}) 
+  const [[isLoadingUser, user], setUser] = useStorageState('user');
+
+
+  const signInAction = async (session_response) => {
+    setSession(session_response)
+  }
+
+  const {request, promptAsync} = useLogin({signInAction: signInAction}) 
+
+
 
   return (
     <AuthContext.Provider
@@ -39,7 +50,9 @@ export function SessionProvider(props) {
           setSession(null);
         },
         session: session!=null ? new TokenResponse(session) : session,
-        refreshSession: async () => {refreshToken({token: session, signInAction: setSession})},
+        refreshSession: async () => {refreshToken({token: session, signInAction: signInAction})},
+        user: session!=null ? user : null,
+        setUser: setUser,
         isLoading,
         request
       }}>

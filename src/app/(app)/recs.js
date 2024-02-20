@@ -13,6 +13,7 @@ import * as Haptics from 'expo-haptics'
 import Card from '../../Components/Card'
 import { useSpotifyRequest} from '../../APICommunication/api_communicator'
 import PlaylistCard from '../../Components/playlistCard'
+import { Button } from 'react-native-paper'
 
 
 export default function Page () {
@@ -38,11 +39,23 @@ export default function Page () {
             } else if (state === -2) {
                 setHatedSongs([...hatedSongs, filteredTrackResponse[animateIndex.value]])
             }
-            animateIndex.value = withTiming(animateIndex.value + 1, { duration: 200 })
+            animateIndex.value = withTiming(animateIndex.value + 1, { duration: 100 })
             setActiveIndex(activeIndex + 1)
         }
 
     };
+   
+    React.useEffect(() => {
+        async function fetchNewRecs() {
+        if(activeIndex === filteredTrackResponse.length){
+            const temp = await fetchFromSpotify({URL: searchParams['q'] })
+            setActiveIndex(0)
+            animateIndex.value = withTiming(0, { duration: 100 })
+        }
+        }
+        fetchNewRecs()
+    }
+    , [activeIndex])
 
     React.useEffect(() => {
         Math.abs(cardState) === 1 ? Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium) : null
@@ -120,7 +133,19 @@ export default function Page () {
                 </Animated.View>
             </View>
             <View className=" h-[85%] w-full flex-col items-center justify-center">
-                {presentableTrackResponses.slice(activeIndex, activeIndex + 5)}
+                 {
+                    activeIndex === filteredTrackResponse.length  && activeIndex!=0?
+                    (
+                    
+                    <Animated.View entering={FadeIn.duration(200)} className="flex justify-center items-center flex-col">
+                    <Text className="text-xl font-bold text-walter-white text-center">Fetching new recommendations{"*"*3}</Text>
+                    </Animated.View>): null
+                 }
+                 
+                 
+                 { presentableTrackResponses.slice(activeIndex, activeIndex + 5) 
+                 
+                 }
 
             </View>
 

@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
-import { Text, View, StyleSheet, Pressable, Image } from 'react-native'
+import { Text, View, StyleSheet, Pressable, ScrollView, Dimensions } from 'react-native'
+import { Image } from 'expo-image'
 import { router } from 'expo-router'
 import Selector from '../../Preferences/selector'
 import { useStorageState } from '../../Storage/asyncStorageFunctions'
 import { useSession } from '../../Context/authContext'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
 var selected = {
     genres: [],
     artists: [],
@@ -27,11 +30,12 @@ var selected = {
 
 export default function App () {
     const [dummyState, setDummyState] = useState(false)
-    const {signOut} = useSession()
+    const {signOut, user} = useSession()
     const forceRender = () => {
         setDummyState(!dummyState)
     }
     const [recs_endpoint, storeStringData] = useStorageState('recs_endpoint')
+    const insets = useSafeAreaInsets()
 
     function getRecommendations (selected) {
         if (selected.length() == 0) {
@@ -62,7 +66,7 @@ export default function App () {
             query = query.slice(0, -1)
         }
 
-        storeStringData('/recommendations?' + query)
+        storeStringData('/recommendations?limit=100&' + query)
         router.push('/recs?q=/recommendations%3F' + query)
     }
 
@@ -118,7 +122,10 @@ export default function App () {
                                 .replace(/\b\w/g, (word_head) => word_head.toUpperCase())}
                         </Text>
                         <Pressable onPress={() => changeSelected(type, 'rm', item)} style={{ hitSlop: 4 }}>
-                            <Text style={selectionStyles.removeButton}> &#10006; </Text>
+                            <Image 
+                            source={require('../../../assets/icons/close_small.svg')}
+                            className=" h-6 w-6"
+                            />
                         </Pressable>
                     </View>
                 ))}
@@ -127,21 +134,25 @@ export default function App () {
     }
 
     return (
-        <View style={styles.body}>
+        <View style={[styles.body, {paddingBottom: insets.bottom}]}>
             {!currentPage && (
                 <View>
-                    <View style={containerStyles.topDiv}>
-                        <Text style={[containerStyles.textContainer, styles.title]}>
+                    <View style={containerStyles.topDiv} className="px-4">
+                    <Text className="text-2xl font-semibold text-groove-grey">
+                           Hi {user ? user.display_name : "Anonymous"}!
+                        </Text>
+                        <Text className=" text-4xl py-2 font-semibold text-walter-white">
                             ¡Choose your Groove!
                         </Text>
 
-                        <View style={containerStyles.selectionsContainer}>
+                        <View style={containerStyles.selectionsContainer} className=" pt-5">
                             <View style={selectionStyles.selectionDiv}>
                                 <Text
                                     style={
                                         (containerStyles.textContainer,
                                             selectionStyles.selectionText)
-                                    }>
+                                    }
+                                    >
                                     Genres
                                 </Text>
                                 {selected.genres.length == 0 ? (
@@ -149,8 +160,10 @@ export default function App () {
                                         style={[
                                             containerStyles.textContainer,
                                             { alignSelf: 'flex-start' },
-                                        ]}>
-                                        None!
+                                            {fontSize: 16},
+                                        ]}
+                                        className="font-semibold">
+                                        No genres selected
                                     </Text>
                                 ) : (
                                     renderSelected(selected, 'genres')
@@ -170,8 +183,11 @@ export default function App () {
                                         style={[
                                             containerStyles.textContainer,
                                             { alignSelf: 'flex-start' },
-                                        ]}>
-                                        None!
+                                            {fontSize: 16},
+                                        ]}
+                                        className="font-semibold"
+                                        >
+                                        No artists selected
                                     </Text>
                                 ) : (
                                     renderSelected(selected, 'artists')
@@ -191,8 +207,11 @@ export default function App () {
                                         style={[
                                             containerStyles.textContainer,
                                             { alignSelf: 'flex-start' },
-                                        ]}>
-                                        None!
+                                            {fontSize: 16},
+                                        ]}
+                                        className="font-semibold"
+                                        >
+                                        No tracks selected!
                                     </Text>
                                 ) : (
                                     renderSelected(selected, 'tracks')
@@ -208,8 +227,13 @@ export default function App () {
                                 width: Dimensions.get('screen').width + 100,
                                 height: '100%',
                                 justifyContent: 'center',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
                             }}
                             horizontal={true}
+                            showsHorizontalScrollIndicator={false}
+                            showsVerticalScrollIndicator={false}
+                    
                             contentOffset={{ x: 50, y: 0 }}>
                             <Pressable
                                 style={selectorStyles.button}
@@ -251,10 +275,11 @@ export default function App () {
                                 <View style={selectorStyles.playButton}>
                                     <Image
                                         style={{ height: '85%', width: '85%' }}
-                                        source={require('../../../assets/icons/play_button.svg')}
+                                        source={require('../../../assets/icons/playbutton.png')}
                                     />
                                 </View>
                             </Pressable>
+                            
                         </View>
                     </View>
                 </View>
@@ -293,11 +318,11 @@ const containerStyles = StyleSheet.create({
     selectorContainer: {
         height: '40%',
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        
     },
     toRecs: {
         height: '35%',
+        marginTop: 30,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -344,25 +369,27 @@ const selectorStyles = StyleSheet.create({
 const selectionStyles = StyleSheet.create({
     selectionDiv: {
         marginVertical: 4,
-        paddingLeft: 12,
     },
     selectionText: {
         fontSize: 24,
-        fontWeight: 'bold',
-        color: '#838384',
+        fontWeight: '600',
+        color: '#B3B3B3',
     },
     sItem: {
         backgroundColor: '#1e1e1e',
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: 4,
-        marginRight: 8,
+        justifyContent: 'center',
+        marginVertical: 5,
+        marginRight: 10,
         padding: 3,
-        paddingHorizontal: 6,
-        borderRadius: 8,
+        gap: 10,
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        borderRadius: 10,
     },
     text: {
-        color: '#B4b3b3',
+        color: 'white',
         fontWeight: 700,
         fontSize: 16,
     },

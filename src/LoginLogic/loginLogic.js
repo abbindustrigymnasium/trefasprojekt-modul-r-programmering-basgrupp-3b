@@ -8,7 +8,7 @@ const discovery = {
     authorizationEndpoint: 'https://accounts.spotify.com/authorize',
     tokenEndpoint: 'https://accounts.spotify.com/api/token',
 };
-  const clientId = '749b24029aaa4c558238fc1e0b9dd38a'
+  const clientId = 'dd196a2f15604b5b8ac6fbb485be2036'
 
 
 export const useLogin = ({signInAction}) => {
