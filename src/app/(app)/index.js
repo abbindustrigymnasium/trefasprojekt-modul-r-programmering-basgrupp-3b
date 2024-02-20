@@ -4,9 +4,14 @@ import { router } from 'expo-router'
 import Selector from '../../Preferences/selector'
 import { useStorageState } from '../../Storage/asyncStorageFunctions'
 import { useSession } from '../../Context/authContext'
+
+// object to construct search query for spotify from
 var selected = {
+    // array of strings
     genres: [],
+    // array of [artists.items[i].name (string), artists.items[i].id (string)]
     artists: [],
+    // array of [tracks.items[i].name + '-' + tracks.items[i].artists (string), tracks.items[i].id (string)]
     tracks: [],
     length: function () {
         return this.genres.length + this.artists.length + this.tracks.length
@@ -26,13 +31,16 @@ var selected = {
 }
 
 export default function App () {
+    // to re-render page when deemed necessary (when updating selected in index.js)
     const [dummyState, setDummyState] = useState(false)
-    const {signOut} = useSession()
     const forceRender = () => {
         setDummyState(!dummyState)
     }
+
+    const { signOut } = useSession()
     const [recs_endpoint, storeStringData] = useStorageState('recs_endpoint')
 
+    // End of file, construct and store query string and navigate to recommendations.js
     function getRecommendations (selected) {
         if (selected.length() == 0) {
             alert("Please select at least one seed Genre/Track/Artist")
@@ -66,8 +74,9 @@ export default function App () {
         router.push('/recs?q=/recommendations%3F' + query)
     }
 
+    // For handling navigation between selector.js and index.js
+    // (Which isn't actually navigation, just showing or hiding certain tags in App()'s return)
     const [currentPage, setPage] = useState()
-    // null
 
     const handlePage = (component) => {
         setPage(currentPage === component ? null : component)
@@ -77,9 +86,13 @@ export default function App () {
         if (currentPage != null) {
             return (
                 <Selector
+                    // 'Genres', 'Artists' or 'Tracks'
                     type={currentPage}
+                    // Function to set currentpage back to null, 'navigating' back to index.js
                     handlePage={() => handlePage(currentPage)}
+                    // Returns selected
                     getSelected={getSelected}
+                    // Enables manipulation of selected from selector.js
                     changeSelected={changeSelected}
                 />
             )
@@ -100,11 +113,13 @@ export default function App () {
                 (i) => !(i[0] === item[0] && i[1] === item[1])
             )
         }
+        // If changeSelected is called while Selector isn't shown...
         if (currentPage == null) {
             forceRender()
         }
     }
 
+    // Returns jsx for the selected object
     function renderSelected (selected, type) {
         return (
             <View style={containerStyles.selection}>
@@ -128,6 +143,7 @@ export default function App () {
 
     return (
         <View style={styles.body}>
+            {/* if currentPage is null, show this */}
             {!currentPage && (
                 <View>
                     <View style={containerStyles.topDiv}>
@@ -251,7 +267,7 @@ export default function App () {
                                 <View style={selectorStyles.playButton}>
                                     <Image
                                         style={{ height: '85%', width: '85%' }}
-                                        source={require('../../../assets/icons/play_button.svg')}
+                                        source={require('../../../assets/icons/playbutton.svg')}
                                     />
                                 </View>
                             </Pressable>
@@ -259,11 +275,13 @@ export default function App () {
                     </View>
                 </View>
             )}
+            {/* if currentPage has a real value, openPage() */}
             {currentPage && openPage()}
         </View>
     )
 }
 
+// style definitions
 const styles = StyleSheet.create({
     body: {
         backgroundColor: '#101010',

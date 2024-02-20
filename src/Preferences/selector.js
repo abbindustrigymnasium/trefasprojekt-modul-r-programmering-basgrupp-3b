@@ -23,6 +23,7 @@ export default function Selector ({
             fetchDirectly: false
         }
     )
+    // toDisplay = array filtered from api response, contents dependent on type
     const [toDisplay, setToDisplay] = useState([])
     const [endpoint, setEndpoint] = useState(
         type == 'Genres'
@@ -30,6 +31,7 @@ export default function Selector ({
             : `/me/top/${type.toLowerCase}&limit=50`
     )
 
+    // Called if endpoint changes, executes a spotify request
     useEffect(() => {
         const fetchData = async () => {
             await fetchfromSpotify(endpoint)
@@ -39,6 +41,8 @@ export default function Selector ({
     }, [endpoint, type])
 
 
+    // Called if data (from useSpotifyRequest) changes (on user search in 'Artists'/'Tracks' Selector)
+    // Populates toDisplay
     useEffect(() => {
         if (data != null) {
             const apiData = data[type.toLowerCase()]
@@ -81,6 +85,7 @@ export default function Selector ({
         setEndpoint(`/search?q=${search}&type=${type.slice(0, -1)}&limit=50`)
     }
 
+    // To hide a specific View when searching
     const [keyboardVisible, setKeyboardVisible] = useState(false)
 
     useEffect(() => {
@@ -104,10 +109,14 @@ export default function Selector ({
         }
     }, [])
 
+    // Filters genres based on contents of user's search (input)
     function executeSearch (arr) {
         return arr.filter((e) => e.startsWith(input.toLowerCase()))
     }
 
+    // Adds or removes item from selected
+    // forceRender is ultimately redundant, as selected could've simply been added to state management
+    // but such was not my will 
     function selectItem (type, method, item) {
         if (getSelected().length() < 5 || method == 'rm') {
             changeSelected(type, method, item)
@@ -117,6 +126,7 @@ export default function Selector ({
         forceRender()
     }
 
+    // Returns jsx for an array (toDisplay)
     function renderArray (type, data) {
         var arr = []
         if (type == 'genres') {
@@ -163,6 +173,7 @@ export default function Selector ({
         )
     }
 
+    // Returns jsx for selected
     function renderSelected (arr, type) {
         return (
             <ScrollView
@@ -189,6 +200,7 @@ export default function Selector ({
             <View style={top.body}>
                 <Text style={[styles.textContainer, styles.title]}>Search {type}</Text>
                 <View style={top.searchContainer}>
+                    {/* Since 'Genres' and the others have different goals with the search */}
                     {type == 'Genres' ? (
                         <TextInput
                             placeholder={`¿What's today's groove?`}
@@ -203,13 +215,6 @@ export default function Selector ({
                                 style={{ width: '85%', height: '90%', fontSize: 18 }}
                                 onSubmitEditing={() => apiSearch(type.toLowerCase(), apiInput)}
                             />
-                            <Pressable
-                                style={top.searchButton}
-                                onPress={() => apiSearch(type.toLowerCase(), apiInput)}>
-                                <Image
-                                    source={require('../../assets/icons/search_button.png')}
-                                />
-                            </Pressable>
                         </View>
                     )}
                 </View>
@@ -217,7 +222,7 @@ export default function Selector ({
                 {toDisplay.length > 0 || toDisplay[1] == 'populated' ? (
                     renderArray(type.toLowerCase(), toDisplay)
                 ) : (
-                    <Text style={{ textAlign: 'center', fontSize: 24 }}>
+                    <Text style={{ textAlign: 'center', fontSize: 24, color: 'white' }}>
                         Loading {type}...
                     </Text>
                 )}
@@ -252,6 +257,7 @@ export default function Selector ({
     )
 }
 
+// style definitions
 const styles = StyleSheet.create({
     body: {
         height: '100%',
