@@ -47,7 +47,7 @@ export default function Page () {
    
     React.useEffect(() => {
         async function fetchNewRecs() {
-        if(activeIndex === filteredTrackResponse.length){
+        if(activeIndex === filteredTrackResponse.length && activeIndex!=0){
             const temp = await fetchFromSpotify({URL: searchParams['q'] })
             setActiveIndex(0)
             animateIndex.value = withTiming(0, { duration: 100 })
