@@ -32,6 +32,7 @@ export const spotifyRequest = async ({ endpoint, method = "GET", auth_token, cos
 
 }
 
+// Custom react hook for Spotify API requests
 export const useSpotifyRequest = ({ endpoint, method, costum_headers, body, fetchDirectly }) => {
   const [data, setData] = useState(null)
   const { session, refreshSession } = useSession()
