@@ -97,7 +97,7 @@ async function handleSound() {
 
 async function unloadSound() {
     if(sound) {
-        sound.unloadAsync()
+        await sound.unloadAsync()
     }
 
 }
