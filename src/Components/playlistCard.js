@@ -214,7 +214,13 @@ export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) 
                       <Text style={styles.playlistName}>Choosen Playlist</Text>
                     </View>
                     <View style={styles.albumScrollImg}>
-                      <Image source={{uri: selectedPlaylist == null ? 'https://cdn.getmidnight.com/b5a0b552ae89a91aa34705031852bd16/2022/08/1_1---2022-08-24T165236.013-1.png' : selectedPlaylist.images[0].url}} 
+                      <Image 
+                      transition={{
+                        duration: 150, 
+                        effect: 'cross-dissolve',
+                        easing: 'ease-in-out'
+                      }}
+                      source={{uri: selectedPlaylist == null || selectedPlaylist?.images.length === 0 ? 'https://cdn.getmidnight.com/b5a0b552ae89a91aa34705031852bd16/2022/08/1_1---2022-08-24T165236.013-1.png' : selectedPlaylist.images[0].url}} 
                       style={{width: 120, height: 120, borderRadius: 5}} />
                     </View>
                     <View style={styles.choosenName}>
