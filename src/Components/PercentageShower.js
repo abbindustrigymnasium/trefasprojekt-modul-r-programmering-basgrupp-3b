@@ -9,7 +9,7 @@ import Animated, {FlipInEasyX, Easing} from 'react-native-reanimated';
  * 
  * @param {number} percentage - The percantage to be displayed in decimal form. 
  * @param {string} title - The title of the bar. 
- * @returns {JSX.Element} - The rendered InfoText component.
+ * @returns {JSX.Element} - The rendered percentage bar component.
  */
 const PercentageShower = ({ 
     percentage, 

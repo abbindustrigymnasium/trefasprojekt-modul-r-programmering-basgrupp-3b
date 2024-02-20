@@ -7,7 +7,13 @@ import { Image } from 'expo-image';
 import { useSpotifyRequest } from '../APICommunication/api_communicator';
 import { fileToBase64 } from '../FileSystem/toBase64';
 
-
+/**
+ * A popover with to cards: one to create a new playlist and add the songs to that one, and one to add the songs to an existing playlist.
+ * @param {boolean} showPopover - Determines if the popover is visible.
+ * @param {function} setShowPopover - Function to set the visibility of the popover.
+ * @param {Object} likedSongs - The liked songs object, witch is formatted the same way as the response from the endpoint /recommendations from the Spotify API.
+ * @returns {JSX.Element} The popover component.
+ */
 
 export default function PlaylistCard({showPopover, setShowPopover, likedSongs}) {
   

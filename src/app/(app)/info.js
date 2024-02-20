@@ -22,12 +22,18 @@ function millisToMinutesAndSeconds (millis) {
 const pitchClassAndTones = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
 
+/**
+ * Renders the Info page, which fetches and displays information about a song.
+ * 
+ * @returns {JSX.Element} The rendered Info page.
+ */
 export default function Info () {
 
 
+    // Get the search parameters from the URL
     const local = useLocalSearchParams()
 
-
+    // Fetch the song features from the Spotify API, based on the song ID provided in the URL
     const [data, fetchData] = useSpotifyRequest({
         endpoint: `/audio-features/${local['id']}`,
         method: 'GET',
@@ -37,22 +43,24 @@ export default function Info () {
 
 
 
-    // If the page was reloaded or navigated to directly, then the modal should be presented as
-    // a full screen page. You may need to change the UI to account for this.
-    const isPresented = router.canGoBack()
-
+ 
 
     return (
         
 
         <View className="flex-1 bg-all-black items-start justify-start px-5 py-5">
             
-            {/* Use `../` as a simple way to navigate to the root. This is not analogous to "goBack". */}
-            {!isPresented && <Pressable onPress={() => { router.back() }} ><Text>Dismiss</Text></Pressable>}
             {/* Native modals have dark backgrounds on iOS, set the status bar to light content. */}
             <StatusBar style="light" />
             <Text className="text-2xl font-bold text-white mb-5">Song features</Text>
 
+            {/* If the data is not available, show a message. Else, show the song features. 
+
+            Features that can be repsresented as a percentage are shown as a bar, with the percentage as the width of the bar.
+
+            The other features are shown as text.
+        
+            */}
             {!data ? <Text className="text-white text-lg font-bold">We can't show any info for this song at the moment</Text> :
                 <View className="w-full h-full flex" style={{ gap: 20 }}>
                     <View className="w-full flex flex-col" style={{ gap: 10 }}>

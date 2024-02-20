@@ -1,3 +1,7 @@
+/**
+ * Renders the login page
+ * @returns {JSX.Element} The rendered login page.
+ */
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native'
 import { Link, Stack } from 'expo-router'
 import LoginButton from '../Components/Login'
@@ -14,6 +18,7 @@ export default function Page () {
             <Text className=" text-groove-grey font-semibold text-center text-lg leading-6">This app requires usage of Spotify, please login with your account.</Text>
 
             </View>
+            {/* The component that is actually responsible for the Login functionality is the LoginButton */}
              <LoginButton className=""></LoginButton>
         </SafeAreaView>
     )

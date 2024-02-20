@@ -1,6 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 
+/** 
+ * Custom hook for managing state in AsyncStorage.
+ * 
+ * 
+ * @param {Array} initialValue - The initial value of the state.
+ * @returns {Array} - An array containing the current state value and a function to update the state. The state contains both the value stored in AsyncStorage and a boolean indicating if the value is still loading.
+ */
+
 function useAsyncState(
   initialValue = [true, null]
 ){
@@ -10,6 +18,14 @@ function useAsyncState(
   )
 }
 
+
+
+
+/**
+ * Store the value in AsyncStorage.
+ * @param {string} key - The key to store the state under in AsyncStorage.
+ * @param {*} value - The value to store in AsyncStorage.
+ */
 
 export const storeDataAsync = async (key, value) => {
     try {
@@ -25,20 +41,11 @@ export const storeDataAsync = async (key, value) => {
     }
   };
 
-
-const getStringData = async (key) => {
-    try {
-      const value = await AsyncStorage.getItem(key);
-
-      if (value !== null) {
-        return value
-        // value previously stored
-      }
-    } catch (e) {
-      // error reading value
-    }
-}
-
+/**
+ * Get the value stored in AsyncStorage.
+ * @param {string} key - The key to store the state under in AsyncStorage.
+ * @returns {*} - The value stored in AsyncStorage.
+ */
 export const getObjectData = async (key) => {
     try {
       const jsonValue = await AsyncStorage.getItem(key);
@@ -48,23 +55,33 @@ export const getObjectData = async (key) => {
     }
   };
 
+/**
+ * Custom hook for managing items in AsyncStorage.
+ *
+ * @param {string} key - The key to store the state under in AsyncStorage.
+ * @returns {Array} - An array containing the current state value and a function to update the state. The state contains both the value stored in AsyncStorage and a boolean indicating if the value is still loading.
+ */
 export function useStorageState(key) {
-    const [state, setState] = useAsyncState();
-  
-    React.useEffect(() => {
-      getObjectData(key).then(( value ) => {
-        setState(value);
-      });
-    }, [key]);
-  
-    const setValue = React.useCallback(
-      value => {
-        setState(value);
-        storeDataAsync(key, value);
-      },
-      [key]
-    );
-  
-    return [state, setValue];
+  const [state, setState] = useAsyncState();
 
+  React.useEffect(() => {
+    getObjectData(key).then((value) => {
+      setState(value);
+    });
+  }, [key]);
+
+  const setValue = React.useCallback(
+    /**
+     * Updates the state value and stores it in AsyncStorage.
+     *
+     * @param {*} value - The new value to set the state to.
+     */
+    (value) => {
+      setState(value);
+      storeDataAsync(key, value);
+    },
+    [key]
+  );
+
+  return [state, setValue];
 }

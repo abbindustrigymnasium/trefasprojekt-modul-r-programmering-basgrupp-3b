@@ -1,20 +1,27 @@
+/**
+ * Renders a login button component, which initiates the login process with Spotify.
+ *
+ * @returns {JSX.Element} The rendered login button component.
+ */
+
+
 import * as React from 'react';
-import * as WebBrowser from 'expo-web-browser';
-import { View, Button, Pressable, Text , StyleSheet} from 'react-native';
-import {Image as ReactImage} from 'react-native'
-import {storeObjectData, storeStringData, getObjectData, getStringData} from '../Storage/asyncStorageFunctions'
-import * as Crypto from 'expo-crypto';
+import { Pressable, Text } from 'react-native';
 import {Image} from 'expo-image'
 import { router } from 'expo-router';
-import spotifyLogo from '../../assets/spotify-logos/Spotify_Logo_RGB_Black.png'
 
+// Session provider is a context provider that provides the session object with account information to the rest of the app
 import {useSession} from '../Context/authContext'
+
+// useSpotifyRequest is a hook that allows to make requests to the Spotify API
 import { useSpotifyRequest } from '../APICommunication/api_communicator';
  
 
 
 export default function LoginButton() {
+  // The dimensions of the button
     const [dimensions, setDimensions] = React.useState({height: 200, width: 200})
+    // The state that determines if the user should be redirected to the home page. Activated when the user clicks the button. 
     const [shouldRedirect, setShouldRedirect] = React.useState(false)
     const [user, fetchUser] = useSpotifyRequest({endpoint: '/me', method: 'GET', fetchDirectly: false})
    const {signIn, request, session, setUser} = useSession()
@@ -28,6 +35,7 @@ export default function LoginButton() {
 
   }
 
+  // If the user is logged in, fetch the user information and redirect to the home page
   React.useEffect(() => {
     async function getUserAndRedirect() {
     if(shouldRedirect && session) {

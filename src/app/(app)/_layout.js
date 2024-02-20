@@ -8,26 +8,47 @@ import { useSession } from '../../Context/authContext'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+
+/**
+ * The layout of the app. This component is the entry point of the application after the user logs in.
+ * @returns {JSX.Element} The rendered component.
+ */
 export default function AppLayout () {
+  // Get the session object from the context
     const {session, isLoading} = useSession()
     const insets = useSafeAreaInsets()
 
+    // If the session is loading, show a loading message
     if(isLoading) {
         return <Text>Loading...</Text>
     }
 
+    // If the user is not logged in, redirect to the login page
     if(!session) {
         return <Redirect href="/login"/>
     }
 
+    // If the user is logged in, show the main app
     return (
         <GestureHandlerRootView style={{flex: 1}}>
+        {/* Show a light status bar because the app has a dark theme */}
         <StatusBar style="light" />
+
+        {/* The main app is a stack of screens */}
+
+        {/* Remove the default header and add a costume one */}
         <Stack screenOptions={{
             header: (props) => <View style={{paddingTop: insets.top}} className="bg-all-black">
-
+              
             </View>
         }} >
+
+        {/* The home page */}
+        <Stack.Screen
+            name="index"
+            />
+
+        {/* The info page */}
             <Stack.Screen
             name="info"
             options={{	       
@@ -43,6 +64,7 @@ export default function AppLayout () {
               presentation: 'modal',	        
             }}	        
             />
+            {/* The Recommendations page */}
            <Stack.Screen
       name="recs"
       options={

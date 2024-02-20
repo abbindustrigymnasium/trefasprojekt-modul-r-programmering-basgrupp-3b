@@ -3,6 +3,7 @@ import { useStorageState } from '../Storage/asyncStorageFunctions';
 import { useLogin, refreshToken } from '../LoginLogic/loginLogic';
 import {TokenResponse} from 'expo-auth-session'
 
+// This context is used to provide the session and user info to the rest of the app.
 const AuthContext = React.createContext({
   signIn: () => null,
   signOut: () => null,
@@ -26,11 +27,18 @@ export function useSession() {
   return value;
 }
 
+/**
+ * Provides session management functionality for authentication.
+ * @component
+ * @param {Object} props - The component props.
+ * @returns {JSX.Element} - The rendered component.
+ */
+
 export function SessionProvider(props) {
   const [[isLoading, session], setSession] = useStorageState('session');
   const [[isLoadingUser, user], setUser] = useStorageState('user');
 
-
+  // If the session is refreshed, store the new session in AsyncStorage.
   const signInAction = async (session_response) => {
     setSession(session_response)
   }

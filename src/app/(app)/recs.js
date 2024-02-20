@@ -16,21 +16,44 @@ import PlaylistCard from '../../Components/playlistCard'
 import { Button } from 'react-native-paper'
 
 
+/**
+ * Represents the Recommendations page.
+ * @returns {JSX.Element} The rendered page component.
+ */
 export default function Page () {
 
     const insets = useSafeAreaInsets()
-    const sizes = useSharedValue({ red: 100, green: 100 })
+
+    // The state of the card. It can be 0, 1, -1, 2, or -2. 0 means the card is in the middle, 1 means the card is to the right and will be swiped if let go off, -1 means the card is to the left and will be swiped if let go off , 2 means the card is swiped to the right and the animation is finished, -2 means the card is swiped to the left and the animation is finished.
     const [cardState, setCardState] = React.useState(0)
+
+    // The index of the card that is currently being animated. Used to control the stack animation.
     const animateIndex = useSharedValue(0)
+
+    // The index of the card that is currently being shown. Used to control interactions with the card.
     const [activeIndex, setActiveIndex] = React.useState(0)
+
+    // The array of liked songs. Used to create the playlist.
     const [likedSongs, setLikedSongs] = React.useState([])
+
+    // The array of songs that the user disliked. Used to avoid adding them to the playlist.
     const [hatedSongs, setHatedSongs] = React.useState([])
+
+    // The search parameters from the URL. Used to fetch the recommendations from the Spotify API.
     const searchParams = useLocalSearchParams()
+
+    // The state of the playlist popover. Used to show and hide the playlist popover.
     const [showPlaylistPopover, setShowPlaylistPopover] = React.useState(false)
 
 
+    // Fetch the recommendations from the Spotify API
     const [trackResponse, fetchFromSpotify] = useSpotifyRequest({ endpoint: searchParams['q'], method: 'GET', fetchDirectly: true })
 
+    
+    /**
+     * Sets the card state and performs additional actions based on the state value.
+     * @param {number} state - The state value to set.
+     */
     function getCardState (state) {
         setCardState(state)
         if (Math.abs(state) >= 2) {
@@ -43,8 +66,9 @@ export default function Page () {
             setActiveIndex(activeIndex + 1)
         }
 
-    };
+    }
    
+    // Fetch new recommendations if the active index is at the end of the list.
     React.useEffect(() => {
         async function fetchNewRecs() {
         if(activeIndex === filteredTrackResponse.length && activeIndex!=0){
@@ -57,21 +81,24 @@ export default function Page () {
     }
     , [activeIndex])
 
+    // Play a haptic feedback so the user knows the card will be swiped if let go off.
     React.useEffect(() => {
         Math.abs(cardState) === 1 ? Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium) : null
 
     }, [cardState])
 
+    // The animated style for the "ADD" indicator.
     const animatedRight = useAnimatedStyle(() => ({
         width: withSpring(cardState === 1 ? 110 : 80, { duration: 300 })
     }))
 
+    // The animated style for the "FORGET" indicator.
     const animatedLeft = useAnimatedStyle(() => ({
         width: withSpring(cardState === -1 ? 110 : 80, { duration: 300 })
     }))
 
 
-
+    // The filtered track response. It contains only the tracks that have a preview URL.
     const filteredTrackResponse = React.useMemo(() => {
         if (trackResponse === null) {
             return []
@@ -82,6 +109,7 @@ export default function Page () {
     }, [trackResponse])
 
 
+    // The presentable track responses. They are the cards that are shown to the user.
     const presentableTrackResponses = filteredTrackResponse.map((element, index) => {
         return <Card
             key={index}
@@ -132,7 +160,10 @@ export default function Page () {
 
                 </Animated.View>
             </View>
+            
             <View className=" h-[85%] w-full flex-col items-center justify-center">
+                {/* Show "Fetching new recommendations..." if the app is fetching new songs. */}
+
                  {
                     activeIndex === filteredTrackResponse.length  && activeIndex!=0?
                     (
@@ -142,13 +173,14 @@ export default function Page () {
                     </Animated.View>): null
                  }
                  
-                 
+                 {/* Show 5 cards at a time*/}
                  { presentableTrackResponses.slice(activeIndex, activeIndex + 5) 
                  
                  }
 
             </View>
 
+            {/* Open the playlist creator */}
             <Pressable
                 onPress={() => { setShowPlaylistPopover(true)}}
                 className=" bg-spott-green w-5/6 max-w-[340px] py-5 flex rounded-2xl items-center justify-center">
